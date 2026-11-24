@@ -6,6 +6,14 @@ export const nav = [
   { label: "Contact Us", to: "/contact" },
 ];
 
+/** Add profile URLs in .env when they are confirmed. Empty hrefs go to Contact. */
+export const social = [
+  { name: "Instagram", href: import.meta.env.VITE_SOCIAL_INSTAGRAM || "" },
+  { name: "Facebook", href: import.meta.env.VITE_SOCIAL_FACEBOOK || "" },
+  { name: "YouTube", href: import.meta.env.VITE_SOCIAL_YOUTUBE || "" },
+  { name: "LinkedIn", href: import.meta.env.VITE_SOCIAL_LINKEDIN || "" },
+];
+
 export const services = [
   {
     slug: "films",
@@ -209,6 +217,20 @@ export const projectCategories = [
 
 /** Empty until real client marks are supplied. Do not invent names. */
 export const clients = [];
+
+/** Home marquee placeholders only. Replace with confirmed marks when supplied. */
+export const collaborators = [
+  { name: "Northframe" },
+  { name: "Lumen Stage" },
+  { name: "Goldline" },
+  { name: "Arclight" },
+  { name: "Velvet Reel" },
+  { name: "Kinegraph" },
+  { name: "Marque" },
+  { name: "Feverlight" },
+  { name: "Studio Atlas" },
+  { name: "Daybreak" },
+];
 
 export const clientSlotCount = 8;
 

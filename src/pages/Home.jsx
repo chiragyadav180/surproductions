@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import ContactForm from "../components/ContactForm";
 import Reveal from "../components/Reveal";
 import Seo from "../components/Seo";
+import CollaboratorMarquee from "../components/CollaboratorMarquee";
 import WorkShowcase from "../components/WorkShowcase";
 import { site } from "../config/site";
 import { principles } from "../data/content";
@@ -148,25 +149,9 @@ export default function Home() {
         </div>
       </section>
 
-      <WorkShowcase showCta />
+      <CollaboratorMarquee />
 
-      <section className="section" id="clients">
-        <div className="container">
-          <div className="section-head section-head-row">
-            <div>
-              <p className="kicker">Our clients</p>
-              <h2>Marks, when they are ready.</h2>
-            </div>
-            <Link className="text-link" to="/clients">
-              Client wall
-            </Link>
-          </div>
-          <p>
-            Client logos are not listed yet. The wall is reserved so each mark can sit at
-            the same size. No names have been added in their place.
-          </p>
-        </div>
-      </section>
+      <WorkShowcase showCta />
 
       <section className="section section-contact" id="enquire">
         <div className="container contact-layout">
