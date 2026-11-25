@@ -1,11 +1,11 @@
-import { randomBytes, scryptSync, timingSafeEqual } from "crypto";
+import { createHmac, randomBytes, scryptSync, timingSafeEqual } from "crypto";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import express from "express";
 import multer from "multer";
 import { createId, normalizeEvent, slugify } from "../shared/event.js";
-import { paths, update } from "./store.js";
+import { load, openMedia, paths, saveMedia, storageMode, update } from "./store.js";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 loadEnv(path.join(root, "cms", ".env"));
@@ -16,23 +16,53 @@ const isProd = process.env.NODE_ENV === "production";
 
 const app = express();
 app.disable("x-powered-by");
+app.set("trust proxy", 1);
 app.use(express.json({ limit: "1mb" }));
+for (const method of ["get", "post", "put", "delete"]) {
+  const original = app[method].bind(app);
+  app[method] = (route, ...handlers) =>
+    original(
+      route,
+      ...handlers.map((handler) =>
+        handler.length >= 4
+          ? handler
+          : (req, res, next) => Promise.resolve(handler(req, res, next)).catch(next),
+      ),
+    );
+}
 app.use((req, res, next) => {
   res.setHeader("X-Content-Type-Options", "nosniff");
   res.setHeader("Referrer-Policy", "same-origin");
   next();
 });
 
-fs.mkdirSync(paths.uploads, { recursive: true });
+try {
+  fs.mkdirSync(paths.uploads, { recursive: true });
+  fs.mkdirSync(paths.images, { recursive: true });
+} catch {
+  /* The deploy filesystem can be read-only. Saved images are served by the media route. */
+}
 app.use("/uploads", express.static(paths.uploads, { maxAge: isProd ? "7d" : 0 }));
+app.use("/images", express.static(path.join(root, "public", "images"), { maxAge: isProd ? "7d" : 0 }));
+
+app.get("/api/health", (req, res) => {
+  res.json({ ok: true, storage: storageMode() });
+});
+
+app.get("/api/media/:file", async (req, res) => {
+  const file = await openMedia(req.params.file);
+  if (!file) return res.status(404).end();
+  res.setHeader("Content-Type", mediaType(req.params.file));
+  res.setHeader("Cache-Control", "public, max-age=86400");
+  res.end(file);
+});
 
 const attempts = new Map();
 
 await ensureAdmin();
 
 function requireAdmin(req, res, next) {
-  const token = readCookie(req, "sur_session");
-  const session = findSession(token);
+  const session = readSession(readCookie(req, "sur_session"));
   if (!session) return res.status(401).json({ error: "Sign in required." });
   req.admin = session;
   if (["POST", "PUT", "PATCH", "DELETE"].includes(req.method)) {
@@ -49,39 +79,36 @@ app.post("/api/admin/login", async (req, res) => {
   if (tooManyAttempts(ip)) {
     return res.status(429).json({ error: "Too many attempts. Wait a few minutes and try again." });
   }
+  if (!sessionSecret()) {
+    return res.status(503).json({ error: "Set SESSION_SECRET in the hosting environment before signing in." });
+  }
   const email = String(req.body?.email || "").trim().toLowerCase();
   const password = String(req.body?.password || "");
-  const result = await update((data) => {
-    const user = data.users.find((item) => item.email === email);
-    if (!user || !verifyPassword(password, user.passwordHash)) return null;
-    const session = {
-      token: randomBytes(32).toString("hex"),
-      csrf: randomBytes(24).toString("hex"),
-      userId: user.id,
-      email: user.email,
-      expiresAt: Date.now() + SESSION_MS,
-    };
-    data.sessions = data.sessions.filter((item) => item.userId !== user.id).concat(session).slice(-20);
-    pushAudit(data, "login", user.email);
-    return session;
-  });
-  if (!result) {
+  const data = await load();
+  if (!data.users.length && !process.env.ADMIN_BOOTSTRAP_PASSWORD) {
+    return res.status(503).json({
+      error: "Set ADMIN_BOOTSTRAP_EMAIL and ADMIN_BOOTSTRAP_PASSWORD in the hosting environment.",
+    });
+  }
+  if (!matchesAdmin(email, password, data)) {
     noteAttempt(ip);
     return res.status(401).json({ error: "Those details do not match an administrator account." });
   }
   clearAttempts(ip);
-  setSessionCookie(res, result.token);
-  res.json({ email: result.email, csrf: result.csrf });
+  const csrf = randomBytes(24).toString("hex");
+  setSessionCookie(req, res, signSession({ email, csrf, exp: Date.now() + SESSION_MS }));
+  try {
+    await update((state) => {
+      pushAudit(state, "login", email);
+    });
+  } catch {
+    /* Sign-in still succeeds when the audit note cannot be stored. */
+  }
+  res.json({ email, csrf });
 });
 
 app.post("/api/admin/logout", requireAdmin, async (req, res) => {
-  await update((data) => {
-    data.sessions = data.sessions.filter((item) => item.token !== req.admin.token);
-  });
-  res.append(
-    "Set-Cookie",
-    "sur_session=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0",
-  );
+  res.append("Set-Cookie", "sur_session=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0");
   res.json({ ok: true });
 });
 
@@ -90,7 +117,7 @@ app.get("/api/admin/me", requireAdmin, (req, res) => {
 });
 
 app.get("/api/admin/overview", requireAdmin, async (req, res) => {
-  const data = await update((state) => state);
+  const data = await load();
   const events = data.events;
   res.json({
     stats: {
@@ -109,13 +136,13 @@ app.get("/api/admin/overview", requireAdmin, async (req, res) => {
 });
 
 app.get("/api/admin/events", requireAdmin, async (req, res) => {
-  const data = await update((state) => state);
+  const data = await load();
   const events = [...data.events].sort((a, b) => String(b.updatedAt).localeCompare(String(a.updatedAt)));
   res.json({ events: events.map(summary) });
 });
 
 app.get("/api/admin/events/:id", requireAdmin, async (req, res) => {
-  const data = await update((state) => state);
+  const data = await load();
   const event = data.events.find((item) => item.id === req.params.id);
   if (!event) return res.status(404).json({ error: "Event not found." });
   res.json({ event });
@@ -191,15 +218,8 @@ app.post("/api/admin/events/:id/duplicate", requireAdmin, async (req, res) => {
 });
 
 const upload = multer({
-  storage: multer.diskStorage({
-    destination: paths.uploads,
-    filename: (req, file, cb) => {
-      const ext = path.extname(file.originalname || "").toLowerCase();
-      const safeExt = [".jpg", ".jpeg", ".png", ".webp", ".gif"].includes(ext) ? ext : ".jpg";
-      cb(null, `${Date.now()}-${randomBytes(4).toString("hex")}${safeExt}`);
-    },
-  }),
-  limits: { fileSize: 8 * 1024 * 1024 },
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 4 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     if (/^image\/(jpeg|png|webp|gif)$/.test(file.mimetype)) cb(null, true);
     else cb(new Error("Upload a JPG, PNG, WEBP or GIF image."));
@@ -207,15 +227,27 @@ const upload = multer({
 });
 
 app.post("/api/admin/media", requireAdmin, (req, res) => {
-  upload.single("file")(req, res, (error) => {
-    if (error) return res.status(400).json({ error: error.message || "Upload failed." });
+  upload.single("file")(req, res, async (error) => {
+    if (error) {
+      const message = error.code === "LIMIT_FILE_SIZE" ? "Images need to be 4 MB or smaller." : error.message;
+      return res.status(400).json({ error: message || "Upload failed." });
+    }
     if (!req.file) return res.status(400).json({ error: "Choose an image to upload." });
-    res.status(201).json({ url: `/uploads/${req.file.filename}` });
+    try {
+      const ext = path.extname(req.file.originalname || "").toLowerCase();
+      const safeExt = [".jpg", ".jpeg", ".png", ".webp", ".gif"].includes(ext) ? ext : ".jpg";
+      const filename = `${Date.now()}-${randomBytes(4).toString("hex")}${safeExt}`;
+      const url = await saveMedia(filename, req.file.buffer);
+      res.status(201).json({ url });
+    } catch (err) {
+      const status = err.status || 500;
+      res.status(status).json({ error: err.expose ? err.message : "Upload failed." });
+    }
   });
 });
 
 app.get("/api/events", async (req, res) => {
-  const data = await update((state) => state);
+  const data = await load();
   const events = data.events
     .filter((item) => item.publicationStatus === "published")
     .sort((a, b) => Number(b.featured) - Number(a.featured) || String(a.startDate).localeCompare(String(b.startDate)));
@@ -226,7 +258,7 @@ app.get("/api/events/:slug", async (req, res) => {
   if (!/^[a-z0-9-]{1,80}$/.test(req.params.slug)) {
     return res.status(404).json({ error: "Event not found." });
   }
-  const data = await update((state) => state);
+  const data = await load();
   const event = data.events.find(
     (item) => item.slug === req.params.slug && item.publicationStatus === "published",
   );
@@ -237,7 +269,7 @@ app.get("/api/events/:slug", async (req, res) => {
   res.json({ event, related });
 });
 
-if (isProd) {
+if (isProd && !process.env.VERCEL) {
   const dist = path.join(root, "dist");
   app.use(express.static(dist));
   app.use((req, res, next) => {
@@ -246,14 +278,26 @@ if (isProd) {
   });
 }
 
-app.use((error, req, res, next) => {
-  if (res.headersSent) return next(error);
-  res.status(500).json({ error: "Something went wrong. Try again." });
+app.use((req, res, next) => {
+  if (req.path.startsWith("/api")) return res.status(404).json({ error: "Not found." });
+  next();
 });
 
-app.listen(PORT, () => {
-  console.log(`SUR API listening on http://localhost:${PORT}`);
+app.use((error, req, res, next) => {
+  if (res.headersSent) return next(error);
+  const status = Number(error.status) || 500;
+  const message = error.expose ? error.message : "Something went wrong. Try again.";
+  res.status(status).json({ error: message });
 });
+
+export default app;
+
+if (!process.env.VERCEL && !globalThis.__surListening) {
+  globalThis.__surListening = true;
+  app.listen(PORT, () => {
+    console.log(`SUR API listening on http://localhost:${PORT}`);
+  });
+}
 
 function stamp(event, previous, events) {
   return {
@@ -299,25 +343,57 @@ function pushAudit(data, action, detail) {
   data.audit = data.audit.slice(0, 200);
 }
 
-function findSession(token) {
-  if (!token) return null;
-  let found = null;
-  const dataPath = paths.store;
-  try {
-    const data = JSON.parse(fs.readFileSync(dataPath, "utf8"));
-    found = (data.sessions || []).find((item) => item.token === token && item.expiresAt > Date.now()) || null;
-  } catch {
-    found = null;
-  }
-  return found;
+function sessionSecret() {
+  if (process.env.SESSION_SECRET) return process.env.SESSION_SECRET;
+  if (!isProd) return "local-dev-only-change-before-deploy";
+  return "";
 }
 
-function setSessionCookie(res, token) {
-  const secure = isProd ? "; Secure" : "";
+function signSession(payload) {
+  const body = Buffer.from(JSON.stringify(payload)).toString("base64url");
+  const signature = createHmac("sha256", sessionSecret()).update(body).digest("base64url");
+  return `${body}.${signature}`;
+}
+
+function readSession(token) {
+  const secret = sessionSecret();
+  if (!secret || !token || !token.includes(".")) return null;
+  const [body, signature] = token.split(".");
+  const expected = createHmac("sha256", secret).update(body).digest("base64url");
+  if (!safeEqual(signature, expected)) return null;
+  try {
+    const data = JSON.parse(Buffer.from(body, "base64url").toString("utf8"));
+    if (!data?.email || !data.exp || data.exp < Date.now()) return null;
+    return data;
+  } catch {
+    return null;
+  }
+}
+
+function matchesAdmin(email, password, data) {
+  const user = (data.users || []).find((item) => item.email === email);
+  if (user && verifyPassword(password, user.passwordHash)) return true;
+  const envEmail = String(process.env.ADMIN_BOOTSTRAP_EMAIL || "").trim().toLowerCase();
+  const envPassword = String(process.env.ADMIN_BOOTSTRAP_PASSWORD || "");
+  if (!envEmail || !envPassword) return false;
+  return email === envEmail && safeEqualString(password, envPassword);
+}
+
+function setSessionCookie(req, res, token) {
+  const https = req.secure || req.headers["x-forwarded-proto"] === "https";
+  const secure = https ? "; Secure" : "";
   res.append(
     "Set-Cookie",
-    `sur_session=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${Math.floor(SESSION_MS / 1000)}${secure}`,
+    `sur_session=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${Math.floor(SESSION_MS / 1000)}${secure}`,
   );
+}
+
+function mediaType(filename) {
+  const ext = path.extname(filename || "").toLowerCase();
+  if (ext === ".png") return "image/png";
+  if (ext === ".webp") return "image/webp";
+  if (ext === ".gif") return "image/gif";
+  return "image/jpeg";
 }
 
 function readCookie(req, name) {
@@ -348,6 +424,16 @@ function safeEqual(a, b) {
   const left = Buffer.from(String(a));
   const right = Buffer.from(String(b));
   if (!left.length || left.length !== right.length) return false;
+  return timingSafeEqual(left, right);
+}
+
+function safeEqualString(a, b) {
+  const left = Buffer.from(String(a));
+  const right = Buffer.from(String(b));
+  if (left.length !== right.length) {
+    timingSafeEqual(left, left);
+    return false;
+  }
   return timingSafeEqual(left, right);
 }
 

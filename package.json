@@ -9,7 +9,7 @@
     "build": "node scripts/export-public-events.mjs && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "start": "node cms/server/index.js"
+    "start": "node cms/server/start.js"
   },
   "dependencies": {
     "concurrently": "^10.0.7",

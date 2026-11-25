@@ -14,17 +14,21 @@ function useAuth() {
 export default function CmsApp() {
   const [user, setUser] = useState(null);
   const [ready, setReady] = useState(false);
+  const [offline, setOffline] = useState(false);
 
   useEffect(() => {
     let active = true;
     api("/api/admin/me")
       .then((data) => {
         if (!active) return;
+        if (!data.email) throw new Error("Sign in required.");
         setCsrf(data.csrf);
         setUser({ email: data.email });
       })
-      .catch(() => {
-        if (active) setUser(null);
+      .catch((err) => {
+        if (!active) return;
+        setUser(null);
+        setOffline(err.status === 503);
       })
       .finally(() => {
         if (active) setReady(true);
@@ -38,17 +42,18 @@ export default function CmsApp() {
 
   return (
     <AuthContext.Provider value={value}>
-      <CmsRoutes ready={ready} />
+      <CmsRoutes ready={ready} offline={offline} />
     </AuthContext.Provider>
   );
 }
 
-function CmsRoutes({ ready }) {
+function CmsRoutes({ ready, offline }) {
   const { pathname } = useLocation();
   const { user } = useAuth();
   const rest = pathname.slice("/cms/admin".length).replace(/^\//, "");
 
   if (!ready) return <p className="page-loading">Loading</p>;
+  if (offline) return <StudioOffline />;
   if (rest === "login") return <Login />;
   if (!user) return <Navigate to="/cms/admin/login" replace />;
 
@@ -61,6 +66,19 @@ function CmsRoutes({ ready }) {
     <Shell active={rest.startsWith("events") ? "events" : "overview"}>
       {page}
     </Shell>
+  );
+}
+
+function StudioOffline() {
+  return (
+    <main className="cms-login">
+      <div className="cms-login-card">
+        <p className="kicker">SUR Productions</p>
+        <h1>Studio CMS</h1>
+        <p>The studio server did not respond. Refresh the page and try signing in again.</p>
+        <Link to="/">Back to the website</Link>
+      </div>
+    </main>
   );
 }
 
@@ -190,13 +208,15 @@ function Overview() {
 
   if (error) return <p className="cms-error">{error}</p>;
   if (!data) return <p>Loading the studio.</p>;
+  if (!data.stats) return <p className="cms-error">The studio could not be loaded.</p>;
 
+  const recent = Array.isArray(data.recent) ? data.recent : [];
   const cards = [
-    ["Events", data.stats.total],
-    ["Published", data.stats.published],
-    ["Drafts", data.stats.draft],
-    ["Archived", data.stats.archived],
-    ["Upcoming", data.stats.upcoming],
+    ["Events", data.stats.total ?? 0],
+    ["Published", data.stats.published ?? 0],
+    ["Drafts", data.stats.draft ?? 0],
+    ["Archived", data.stats.archived ?? 0],
+    ["Upcoming", data.stats.upcoming ?? 0],
   ];
 
   return (
@@ -221,9 +241,9 @@ function Overview() {
       </div>
       <section className="cms-panel">
         <h2>Recently updated</h2>
-        {data.recent.length === 0 ? <p>No events yet.</p> : null}
+        {recent.length === 0 ? <p>No events yet.</p> : null}
         <ul className="cms-recent">
-          {data.recent.map((event) => (
+          {recent.map((event) => (
             <li key={event.id}>
               <Link to={`/cms/admin/events/${event.id}`}>{event.title}</Link>
               <span>{labelFor(PUBLICATION_STATUSES, event.publicationStatus)}</span>
@@ -242,7 +262,7 @@ function EventList() {
 
   function load() {
     api("/api/admin/events")
-      .then((data) => setEvents(data.events))
+      .then((data) => setEvents(Array.isArray(data.events) ? data.events : []))
       .catch((err) => setError(err.message));
   }
 

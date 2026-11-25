@@ -25,15 +25,28 @@ function rewriteUploads(value, copies) {
   return value;
 }
 
-export function exportPublicEvents(data) {
-  const source = data || JSON.parse(fs.readFileSync(storeFile, "utf8"));
+function readSource() {
+  const eventsFile = path.join(root, "cms", "data", "events.json");
+  if (fs.existsSync(eventsFile)) return JSON.parse(fs.readFileSync(eventsFile, "utf8"));
+  if (fs.existsSync(storeFile)) return JSON.parse(fs.readFileSync(storeFile, "utf8"));
+  return { events: [] };
+}
+
+export function publishedDocument(events) {
   const copies = new Set();
-  const events = (Array.isArray(source.events) ? source.events : [])
+  const published = (Array.isArray(events) ? events : [])
     .filter((item) => item.publicationStatus === "published")
     .map((event) => rewriteUploads(event, copies));
+  return { json: `${JSON.stringify({ events: published }, null, 2)}\n`, copies };
+}
+
+export function exportPublicEvents(data) {
+  const source = data || readSource();
+  const document = publishedDocument(source.events);
+  const copies = document.copies;
 
   fs.mkdirSync(path.dirname(outFile), { recursive: true });
-  fs.writeFileSync(outFile, `${JSON.stringify({ events }, null, 2)}\n`);
+  fs.writeFileSync(outFile, document.json);
 
   fs.mkdirSync(imageDir, { recursive: true });
   for (const filename of copies) {
@@ -42,5 +55,6 @@ export function exportPublicEvents(data) {
     fs.copyFileSync(from, path.join(imageDir, filename));
   }
 
-  return { count: events.length, images: copies.size };
+  const count = (source.events || []).filter((item) => item.publicationStatus === "published").length;
+  return { count, images: copies.size };
 }

@@ -19,9 +19,15 @@ export async function api(path, options = {}) {
     headers,
     credentials: "include",
   });
-  const data = await response.json().catch(() => ({}));
-  if (!response.ok) {
-    const error = new Error(data.error || "Request failed.");
+  const type = response.headers.get("content-type") || "";
+  if (!type.includes("json")) {
+    const error = new Error("The studio API is not available on this deployment.");
+    error.status = 503;
+    throw error;
+  }
+  const data = await response.json().catch(() => null);
+  if (!response.ok || !data || typeof data !== "object") {
+    const error = new Error(data?.error || "Request failed.");
     error.status = response.status;
     throw error;
   }
