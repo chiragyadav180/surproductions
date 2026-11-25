@@ -12,6 +12,10 @@ dist
 .env
 .env.*
 !.env.example
+cms/server/data/store.json
+cms/server/data/*.tmp
+public/uploads/*
+!public/uploads/.gitkeep
 dist-ssr
 *.local
 

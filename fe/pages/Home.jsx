@@ -4,6 +4,7 @@ import Reveal from "../components/Reveal";
 import Seo from "../components/Seo";
 import CollaboratorMarquee from "../components/CollaboratorMarquee";
 import WorkShowcase from "../components/WorkShowcase";
+import FeaturedEvents from "../components/FeaturedEvents";
 import { site } from "../config/site";
 import { principles } from "../data/content";
 
@@ -152,6 +153,8 @@ export default function Home() {
       <CollaboratorMarquee />
 
       <WorkShowcase showCta />
+
+      <FeaturedEvents />
 
       <section className="section section-contact" id="enquire">
         <div className="container contact-layout">

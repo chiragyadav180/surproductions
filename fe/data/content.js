@@ -2,11 +2,12 @@ export const nav = [
   { label: "Home", to: "/" },
   { label: "About Us", to: "/about" },
   { label: "Our Work", to: "/work" },
+  { label: "Events", to: "/events" },
   { label: "Our Clients", to: "/clients" },
   { label: "Contact Us", to: "/contact" },
 ];
 
-/** Add profile URLs in .env when they are confirmed. Empty hrefs go to Contact. */
+/** Add profile URLs in cms/.env when they are confirmed. Empty hrefs go to Contact. */
 export const social = [
   { name: "Instagram", href: import.meta.env.VITE_SOCIAL_INSTAGRAM || "" },
   { name: "Facebook", href: import.meta.env.VITE_SOCIAL_FACEBOOK || "" },

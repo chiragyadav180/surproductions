@@ -19,17 +19,17 @@ export default function Layout() {
   }, [pathname, hash]);
 
   return (
-    <>
+    <div className="min-h-screen bg-black font-sans text-cream antialiased">
       <a className="skip-link" href="#main">
         Skip to content
       </a>
       <Header />
       <main id="main">
-        <Suspense fallback={<div className="page-loading" role="status">Loading</div>}>
+        <Suspense fallback={<div className="page-loading bg-black text-gold" role="status">Loading</div>}>
           <Outlet />
         </Suspense>
       </main>
       <Footer />
-    </>
+    </div>
   );
 }
