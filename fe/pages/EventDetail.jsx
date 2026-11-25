@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import Seo from "../components/Seo";
 import EventView from "../components/EventView";
 import NotFound from "./NotFound";
+import { loadPublishedEvent } from "../data/publishedEvents";
 
 export default function EventDetail() {
   const { slug } = useParams();
@@ -11,20 +12,18 @@ export default function EventDetail() {
 
   useEffect(() => {
     let active = true;
-    fetch(`/api/events/${slug}`)
-      .then((response) => {
-        if (response.status === 404) throw new Error("missing");
-        if (!response.ok) throw new Error("unavailable");
-        return response.json();
-      })
+    loadPublishedEvent(slug)
       .then((data) => {
         if (!active) return;
+        if (data.missing) {
+          setState("missing");
+          return;
+        }
         setPayload(data);
         setState("ready");
       })
-      .catch((error) => {
-        if (!active) return;
-        setState(error.message === "missing" ? "missing" : "error");
+      .catch(() => {
+        if (active) setState("error");
       });
     return () => {
       active = false;

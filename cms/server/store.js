@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import { exportPublicEvents } from "./exportPublic.js";
 
 const serverDir = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(serverDir, "../..");
@@ -27,6 +28,7 @@ function write(data) {
   const tmp = `${file}.tmp`;
   fs.writeFileSync(tmp, JSON.stringify(data, null, 2));
   fs.renameSync(tmp, file);
+  exportPublicEvents(data);
 }
 
 let chain = Promise.resolve();

@@ -1,0 +1,390 @@
+{
+  "events": [
+    {
+      "title": "CHHATTISGARH RISING | TRIPLE E",
+      "subtitle": "WHERE TALENT MEETS OPPORTUNITY",
+      "slug": "chhattisgarh-rising-triple-e",
+      "category": "Ideas & Experience Festival",
+      "shortDescription": "Chhattisgarh Rising | Triple E is a one-day ideas and experience festival celebrating Entertainment, Education and Entrepreneurship. Bringing together influential voices, local talent, entrepreneurs, students, creators and industry leaders, the event aims to showcase the potential of Chhattisgarh and connect ambition with opportunity.",
+      "description": "A one-day festival in Raipur, built around Entertainment, Education and Entrepreneurship.\n\nConversations, showcases and cultural presentations give local talent a wider stage.",
+      "tagline": "Ideas that inspire. Opportunities that transform.",
+      "eventStatus": "upcoming",
+      "publicationStatus": "published",
+      "featured": true,
+      "homepage": true,
+      "startDate": "",
+      "endDate": "",
+      "startTime": "",
+      "endTime": "",
+      "dateStatus": "tentative",
+      "tentativeDateText": "19 or 20 December 2026",
+      "timezone": "",
+      "venue": "",
+      "city": "Raipur",
+      "state": "Chhattisgarh",
+      "country": "India",
+      "address": "",
+      "mapsUrl": "",
+      "heroImage": "/images/events/1795604926588-f4a06f4c.png",
+      "heroAlt": "Chhattisgarh Rising Triple E event banner.",
+      "coverImage": "/images/events/1795604926588-f4a06f4c.png",
+      "thumbnail": "",
+      "videoUrl": "",
+      "gallery": [],
+      "sections": [
+        {
+          "id": "cf175350-f386-421d-b5e9-1763602b4be9",
+          "heading": "The three pillars",
+          "subtitle": "Entertainment · Education · Entrepreneurship",
+          "body": "**1. Entertainment**\n\nExploring films, media, creators, culture and the business of attention and storytelling. Celebrating local artists, filmmakers, performers and creative talent while connecting them with wider opportunities.\n\n**2. Education**\n\nFocusing on access, skills, technology, aspiration and pathways for young India. Highlighting the importance of quality education and opportunities for students from different backgrounds.\n\nAnand Kumar, founder of Super 30, represents this pillar through his journey of enabling students to access affordable coaching and pursue competitive examinations.\n\n**3. Entrepreneurship**\n\nCelebrating local ideas, growing businesses, innovation, investment and access to new markets. Creating opportunities for entrepreneurs to connect with investors, industry leaders, brands and potential collaborators.",
+          "image": "",
+          "imageAlt": "",
+          "icon": "Triple E",
+          "visible": true
+        },
+        {
+          "id": "8e06afff-7a27-4056-8602-a151e0be34e6",
+          "heading": "Signature sessions",
+          "subtitle": "Proposed conversations. Participation is still to be confirmed.",
+          "body": "**1. Beyond Limits with Vidyut Jammwal**\n\nEntertainment. Discipline, determination and personal excellence.\n\n**2. Education Beyond Barriers with Anand Kumar**\n\nEducation. Access to education, student opportunities and inspiration.\n\n**3. From Small Towns to the Big Screen**\n\nEntertainment. Regional talent, cinema and storytelling.\n\n**4. Building from Chhattisgarh: Ideas, Enterprise and Investment**\n\nEntrepreneurship. Local businesses, innovation, investment and growth.\n\n**5. Where Is the Money Going? Markets and Opportunities**\n\nEntrepreneurship. Financial markets, investment and emerging opportunities.\n\n**6. The Business of Entertainment and the Power of Stories**\n\nEntertainment. The business of films, media, creators and storytelling.\n\n**7. Chhattisgarh Voices: Business, Film, Culture and Creators**\n\nLocal spotlight. Local entrepreneurs, artists, filmmakers and creators.\n\n**8. The Surprise Conversation**\n\nCross-pillar. A special conversation featuring surprise guests.",
+          "image": "",
+          "imageAlt": "",
+          "icon": "Programme",
+          "visible": true
+        },
+        {
+          "id": "1fb31b23-84cc-4ab3-ac49-53d74084fee7",
+          "heading": "Chhattisgarh — local spotlight",
+          "subtitle": "Business, film, culture and creators from the state.",
+          "body": "## Business and enterprise\n\nShowcase local entrepreneurs, their journeys, business ideas, challenges, achievements and growth plans.\n\n## Film and culture\n\nCelebrate local celebrities, artists, filmmakers, film personalities, cultural stories and the creative potential of Chhattisgarh.\n\n## Creators and influencers\n\nHighlight digital creators and influencers who connect with audiences, brands, opportunities and local stories.",
+          "image": "",
+          "imageAlt": "",
+          "icon": "Local",
+          "visible": true
+        },
+        {
+          "id": "8db76473-e589-47bd-a82d-593792e9bc15",
+          "heading": "The message",
+          "subtitle": "Where ideas become ambition, ambition becomes action, and action creates impact.",
+          "body": "## Ideas\n\nKnowledge opens minds.\n\n## Enterprise\n\nAmbition builds businesses.\n\n## Culture\n\nStories move people.\n\n## People\n\nTalent takes the state forward.\n\n- THE RISE CONTINUES.\n- TRIPLE E. ONE RISING STATE.\n- One State. Triple E. Infinite Possibilities.",
+          "image": "",
+          "imageAlt": "",
+          "icon": "Brand",
+          "visible": true
+        }
+      ],
+      "highlights": [
+        {
+          "id": "97ba8eb0-5bb0-4a9f-b916-3187cac14f3c",
+          "title": "Inspire the next generation",
+          "description": "Through powerful conversations and real-life journeys.",
+          "image": ""
+        },
+        {
+          "id": "f416089b-feff-4b06-a203-ed350d1194c5",
+          "title": "Connect local talent",
+          "description": "With meaningful opportunities.",
+          "image": ""
+        },
+        {
+          "id": "21b8ba42-8564-44ed-b446-f001e00d97a1",
+          "title": "Celebrate homegrown ideas",
+          "description": "Businesses and achievements.",
+          "image": ""
+        },
+        {
+          "id": "59cca580-f998-4032-8765-c48a2533178a",
+          "title": "Encourage collaboration",
+          "description": "Partnerships, investment and collaboration.",
+          "image": ""
+        },
+        {
+          "id": "df50d97f-b2b7-42b4-8793-fbf97526c113",
+          "title": "Showcase Chhattisgarh",
+          "description": "Talent, culture and entrepreneurial potential, for a national audience.",
+          "image": ""
+        },
+        {
+          "id": "2eeeaff5-f62b-4523-b105-37f49e160658",
+          "title": "One shared platform",
+          "description": "For students, creators, entrepreneurs and industry leaders.",
+          "image": ""
+        },
+        {
+          "id": "e1af5657-49fe-4622-9855-ca0c572ef664",
+          "title": "Emerging opportunities",
+          "description": "Across entertainment, education and business.",
+          "image": ""
+        }
+      ],
+      "speakers": [
+        {
+          "id": "e63981fa-54f2-480c-b7ba-59b6e81b0a03",
+          "name": "Vidyut Jammwal",
+          "designation": "",
+          "bio": "Exploring discipline, determination, personal growth and pushing beyond perceived limits.",
+          "photo": "",
+          "sessionTitle": "Beyond Limits",
+          "category": "Entertainment",
+          "confirmation": "proposed"
+        },
+        {
+          "id": "108f8285-77a9-482c-b00b-3d76b5c134db",
+          "name": "Anand Kumar",
+          "designation": "",
+          "bio": "Making education accessible, creating opportunities and inspiring students through his Super 30 journey.",
+          "photo": "",
+          "sessionTitle": "Education Beyond Barriers",
+          "category": "Education",
+          "confirmation": "proposed"
+        },
+        {
+          "id": "f2ee5527-d703-4b39-b5ef-10752ba5a1b3",
+          "name": "Kamakhya Narayan Singh",
+          "designation": "",
+          "bio": "Exploring opportunities for regional talent, filmmaking, storytelling and the journey from smaller cities to the national entertainment industry.",
+          "photo": "",
+          "sessionTitle": "From Small Towns to the Big Screen",
+          "category": "Entertainment",
+          "confirmation": "proposed"
+        },
+        {
+          "id": "0e40e0a4-250d-43ec-937b-3b9225e689e2",
+          "name": "Madhu Kela",
+          "designation": "",
+          "bio": "Understanding markets, investments, business opportunities and the movement of capital.",
+          "photo": "",
+          "sessionTitle": "Where Is the Money Going?",
+          "category": "Entrepreneurship",
+          "confirmation": "proposed"
+        },
+        {
+          "id": "577f5775-79e1-4bdb-b66f-d4cb5dea819c",
+          "name": "Special guest",
+          "designation": "",
+          "bio": "Special appearances and engaging conversations with guests from different fields.",
+          "photo": "",
+          "sessionTitle": "Surprise Appearances and Conversations",
+          "category": "Cross-pillar",
+          "confirmation": "proposed"
+        }
+      ],
+      "sessions": [
+        {
+          "id": "9b1d7f0a-3af8-4961-ba6d-bed6a62e1309",
+          "title": "Entertainment",
+          "category": "Entertainment",
+          "description": "Beyond Limits with Vidyut Jammwal. Filmmaker conversations. Local film and creator voices. Entertainment, media and storytelling discussions.",
+          "startTime": "12:00 PM",
+          "endTime": "2:20 PM",
+          "stage": "",
+          "speakers": "Vidyut Jammwal",
+          "confirmation": "proposed"
+        },
+        {
+          "id": "87293904-7e27-4442-bbbb-d2f81dc47401",
+          "title": "Education",
+          "category": "Education",
+          "description": "Education Beyond Barriers with Anand Kumar. Educator conversations. Student opportunities and aspirations. Access to education and skills development.",
+          "startTime": "2:20 PM",
+          "endTime": "4:20 PM",
+          "stage": "",
+          "speakers": "Anand Kumar",
+          "confirmation": "proposed"
+        },
+        {
+          "id": "d171ebfe-7845-4be2-bec7-c6889f17f726",
+          "title": "Entrepreneurship",
+          "category": "Entrepreneurship",
+          "description": "Local entrepreneurs and business stories. Where Is the Money Going? with Madhu Kela. Business leaders and investment conversations. Creator and brand discussions. Special guests and finale.",
+          "startTime": "4:20 PM",
+          "endTime": "7:30 PM",
+          "stage": "",
+          "speakers": "Madhu Kela",
+          "confirmation": "proposed"
+        }
+      ],
+      "scheduleStatus": "indicative",
+      "scheduleNote": "Indicative flow. Final timings, speaker order and session details are subject to confirmation.",
+      "zones": [
+        {
+          "id": "b15b2b67-3750-4b65-bcd3-903bee981e7e",
+          "title": "Rising Startups",
+          "description": "A platform for homegrown businesses, emerging startups and bold new ideas to showcase their products, services and entrepreneurial journeys.",
+          "image": "",
+          "category": "Enterprise"
+        },
+        {
+          "id": "b8dd8edc-6265-4b1c-92af-1e1250667836",
+          "title": "Rising Minds",
+          "description": "A space celebrating student innovations, young achievers, education initiatives and the next generation of thinkers.",
+          "image": "",
+          "category": "Education"
+        },
+        {
+          "id": "81fead17-6e31-413e-a4f2-1f9780352d23",
+          "title": "Rising Creators",
+          "description": "A platform for artists, storytellers, influencers, filmmakers and digital talent to present their creativity and connect with opportunities.",
+          "image": "",
+          "category": "Culture"
+        },
+        {
+          "id": "2cd720ad-c31f-475f-9bbc-9bb221b57a3b",
+          "title": "Rising Brands",
+          "description": "An opportunity for local businesses and brands to showcase their offerings, build visibility and explore new markets.",
+          "image": "",
+          "category": "Enterprise"
+        },
+        {
+          "id": "8dac0b89-2b22-40dc-a2f3-f4db778a9f39",
+          "title": "Rising Ideas",
+          "description": "An interactive space for experiences, innovations and solutions that imagine the future of Chhattisgarh.",
+          "image": "",
+          "category": "Experience"
+        }
+      ],
+      "audiences": [
+        {
+          "id": "4206df33-b98e-4ca5-8b65-b7d797f2d6a2",
+          "label": "Students"
+        },
+        {
+          "id": "ce04a96b-90b6-4ac7-bd91-fea173fe4cf3",
+          "label": "Young professionals"
+        },
+        {
+          "id": "9add9841-5bb5-4c32-9ac4-c4913322484a",
+          "label": "Entrepreneurs"
+        },
+        {
+          "id": "346ad97d-7119-4558-b126-977f458a8393",
+          "label": "Startup founders"
+        },
+        {
+          "id": "a562557b-8141-4c2e-bf9f-7bf07e3f6b4a",
+          "label": "Creators and influencers"
+        },
+        {
+          "id": "65d28e8d-dd41-4d15-ac5e-19e10ae4dccf",
+          "label": "Investors"
+        },
+        {
+          "id": "19244293-b063-41e2-b681-0a8114278887",
+          "label": "Educators"
+        },
+        {
+          "id": "562f6e78-022f-4405-9091-f46d6603db55",
+          "label": "Industry leaders"
+        },
+        {
+          "id": "592ad691-f9ca-4e35-9a76-21c5ee194960",
+          "label": "Business owners"
+        },
+        {
+          "id": "56511c73-aad5-4398-8460-133e4b82744c",
+          "label": "Policy and government representatives"
+        },
+        {
+          "id": "3454b907-3431-45e4-89e6-e66df01948fe",
+          "label": "Media and entertainment professionals"
+        }
+      ],
+      "benefits": [
+        {
+          "id": "8eb10cf6-886a-4bd0-bb02-7c07204b88a7",
+          "title": "Giving local talent a national platform.",
+          "description": ""
+        },
+        {
+          "id": "aa8d0833-0077-45a5-9c03-fee55196641a",
+          "title": "Connecting skills with meaningful opportunities.",
+          "description": ""
+        },
+        {
+          "id": "0f661754-837d-4b02-a3c5-33b15597c0c7",
+          "title": "Encouraging more work, partnerships and collaborations.",
+          "description": ""
+        },
+        {
+          "id": "d4b2838f-97e2-4e41-bedd-817b0f5f1ad5",
+          "title": "Promoting Chhattisgarh as a destination for films and creative storytelling.",
+          "description": ""
+        },
+        {
+          "id": "0b6265c9-43a0-4ab3-9a63-8c9d04ce08ea",
+          "title": "Helping local businesses reach bigger markets.",
+          "description": ""
+        },
+        {
+          "id": "ff06f54a-3b0d-4a4a-b993-f78214bd53e8",
+          "title": "Building a stronger and more visible identity for the state.",
+          "description": ""
+        },
+        {
+          "id": "c060d1cc-fdfd-4e70-86d5-a6dd7341df06",
+          "title": "Creating opportunities for young people, creators and entrepreneurs.",
+          "description": ""
+        }
+      ],
+      "registrationUrl": "",
+      "ticketUrl": "",
+      "enquiryUrl": "",
+      "ctaText": "",
+      "ctaVisible": false,
+      "registrationStatus": "hidden",
+      "media": {
+        "before": "Speaker announcements and reveals. Event countdown campaigns. Digital stories and promotional content. Media outreach and publicity. Social media promotions.",
+        "during": "Live event coverage. Speaker interviews. Short-form video reels. Important quotes and highlights. Creator and influencer content. Photography and video coverage.",
+        "after": "Official event film. Speaker highlights and video clips. Editorial stories and media coverage. Digital amplification. Event photographs and recap content.",
+        "coverage": "",
+        "press": "",
+        "social": []
+      },
+      "pageBlocks": [
+        {
+          "key": "story",
+          "visible": true
+        },
+        {
+          "key": "highlights",
+          "visible": true
+        },
+        {
+          "key": "speakers",
+          "visible": true
+        },
+        {
+          "key": "agenda",
+          "visible": true
+        },
+        {
+          "key": "zones",
+          "visible": true
+        },
+        {
+          "key": "audience",
+          "visible": true
+        },
+        {
+          "key": "benefits",
+          "visible": true
+        },
+        {
+          "key": "media",
+          "visible": true
+        },
+        {
+          "key": "gallery",
+          "visible": false
+        },
+        {
+          "key": "cta",
+          "visible": false
+        }
+      ],
+      "id": "7e45f3c4-b443-4fa3-85fc-c16f10cb9fd7",
+      "createdAt": "2026-11-25T11:10:12.968Z",
+      "updatedAt": "2026-11-25T11:34:16.347Z"
+    }
+  ]
+}

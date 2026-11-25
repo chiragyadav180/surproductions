@@ -4,6 +4,7 @@ import PageHero from "../components/PageHero";
 import Seo from "../components/Seo";
 import { EventCard, EventFeature } from "../components/EventView";
 import { EVENT_STATUSES } from "../../cms/shared/event.js";
+import { loadPublishedEvents } from "../data/publishedEvents";
 
 const filters = [
   { id: "all", label: "All" },
@@ -19,14 +20,10 @@ export default function Events() {
 
   useEffect(() => {
     let active = true;
-    fetch("/api/events")
-      .then((response) => {
-        if (!response.ok) throw new Error("unavailable");
-        return response.json();
-      })
-      .then((data) => {
+    loadPublishedEvents()
+      .then((events) => {
         if (!active) return;
-        setEvents(data.events || []);
+        setEvents(events);
         setState("ready");
       })
       .catch(() => {

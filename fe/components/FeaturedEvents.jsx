@@ -1,18 +1,17 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { EventCard } from "./EventView";
+import { loadPublishedEvents } from "../data/publishedEvents";
 
 export default function FeaturedEvents() {
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
     let active = true;
-    fetch("/api/events")
-      .then((response) => (response.ok ? response.json() : { events: [] }))
-      .then((data) => {
+    loadPublishedEvents()
+      .then((events) => {
         if (!active) return;
-        const chosen = (data.events || []).filter((event) => event.homepage).slice(0, 3);
-        setEvents(chosen);
+        setEvents(events.filter((event) => event.homepage).slice(0, 3));
       })
       .catch(() => {
         if (active) setEvents([]);
