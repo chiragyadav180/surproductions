@@ -80,9 +80,15 @@ export default function Home() {
         <div className="container hero-content">
           <p className="kicker">Film. Media and communication</p>
           <h1 id="hero-title">
-            <span>We create.</span>
-            <span>We produce.</span>
-            <span>We inspire.</span>
+            <span>
+              <span>We</span> <span>create.</span>
+            </span>
+            <span>
+              <span>We</span> <span>produce.</span>
+            </span>
+            <span>
+              <span>We</span> <span>inspire.</span>
+            </span>
           </h1>
           <p className="lede">
             A cinematic studio for films, documentaries, live events, digital campaigns
@@ -97,12 +103,6 @@ export default function Home() {
             </Link>
           </div>
         </div>
-        <a className="scroll-cue" href="#introduction">
-          <span className="scroll-cue-mark" aria-hidden="true">
-            <i />
-          </span>
-          <span>Scroll down</span>
-        </a>
       </section>
 
       <section className="section" id="introduction">
