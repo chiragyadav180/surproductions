@@ -206,43 +206,7 @@
       ],
       "scheduleStatus": "indicative",
       "scheduleNote": "Indicative flow. Final timings, speaker order and session details are subject to confirmation.",
-      "zones": [
-        {
-          "id": "b15b2b67-3750-4b65-bcd3-903bee981e7e",
-          "title": "Rising Startups",
-          "description": "A platform for homegrown businesses, emerging startups and bold new ideas to showcase their products, services and entrepreneurial journeys.",
-          "image": "",
-          "category": "Enterprise"
-        },
-        {
-          "id": "b8dd8edc-6265-4b1c-92af-1e1250667836",
-          "title": "Rising Minds",
-          "description": "A space celebrating student innovations, young achievers, education initiatives and the next generation of thinkers.",
-          "image": "",
-          "category": "Education"
-        },
-        {
-          "id": "81fead17-6e31-413e-a4f2-1f9780352d23",
-          "title": "Rising Creators",
-          "description": "A platform for artists, storytellers, influencers, filmmakers and digital talent to present their creativity and connect with opportunities.",
-          "image": "",
-          "category": "Culture"
-        },
-        {
-          "id": "2cd720ad-c31f-475f-9bbc-9bb221b57a3b",
-          "title": "Rising Brands",
-          "description": "An opportunity for local businesses and brands to showcase their offerings, build visibility and explore new markets.",
-          "image": "",
-          "category": "Enterprise"
-        },
-        {
-          "id": "8dac0b89-2b22-40dc-a2f3-f4db778a9f39",
-          "title": "Rising Ideas",
-          "description": "An interactive space for experiences, innovations and solutions that imagine the future of Chhattisgarh.",
-          "image": "",
-          "category": "Experience"
-        }
-      ],
+      "zones": [],
       "audiences": [
         {
           "id": "4206df33-b98e-4ca5-8b65-b7d797f2d6a2",
@@ -384,7 +348,7 @@
       ],
       "id": "7e45f3c4-b443-4fa3-85fc-c16f10cb9fd7",
       "createdAt": "2026-11-25T11:10:12.968Z",
-      "updatedAt": "2026-11-25T11:34:16.347Z"
+      "updatedAt": "2026-11-26T11:45:28.514Z"
     }
   ]
 }

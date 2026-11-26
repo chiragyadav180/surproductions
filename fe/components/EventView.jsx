@@ -160,7 +160,6 @@ function Highlights({ event }) {
 
 function Speakers({ event }) {
   const people = (event.speakers || []).filter((item) => item.name);
-  const needsNotice = people.some((item) => item.confirmation !== "confirmed");
   return (
     <section className="section" aria-labelledby="event-speakers">
       <div className="container">
@@ -168,11 +167,6 @@ function Speakers({ event }) {
           <p className="kicker">Speakers and guests</p>
           <h2 id="event-speakers">Voices on the programme</h2>
         </div>
-        {needsNotice ? (
-          <p className="event-notice">
-            Proposed speaker line-up. Participation and session details are subject to confirmation.
-          </p>
-        ) : null}
         <div className="event-people">
           {people.map((person) => (
             <article className="event-person" key={person.id}>
@@ -201,11 +195,6 @@ function Speakers({ event }) {
 
 function Agenda({ event }) {
   const sessions = (event.sessions || []).filter((item) => item.title);
-  const note =
-    event.scheduleNote ||
-    (event.scheduleStatus === "indicative"
-      ? "Indicative flow. Final timings and order to be confirmed."
-      : "");
   return (
     <section className="section" aria-labelledby="event-agenda">
       <div className="container">
@@ -213,7 +202,6 @@ function Agenda({ event }) {
           <p className="kicker">Agenda</p>
           <h2 id="event-agenda">{event.scheduleStatus === "final" ? "The running order" : "The shape of the day"}</h2>
         </div>
-        {note ? <p className="event-notice">{note}</p> : null}
         <ol className="event-agenda">
           {sessions.map((session) => (
             <li key={session.id}>

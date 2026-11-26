@@ -10,9 +10,9 @@ const uploadDir = path.join(root, "public", "uploads");
 const imageDir = path.join(root, "public", "images", "events");
 
 function rewriteUploads(value, copies) {
-  if (typeof value === "string" && value.startsWith("/uploads/")) {
+  if (typeof value === "string" && (value.startsWith("/uploads/") || value.startsWith("/api/media/"))) {
     const filename = path.basename(value);
-    if (!filename || filename === "." || filename === "..") return "";
+    if (!filename || filename === "." || filename === ".." || filename.includes("..")) return "";
     copies.add(filename);
     return `/images/events/${filename}`;
   }

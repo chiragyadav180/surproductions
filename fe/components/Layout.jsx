@@ -25,7 +25,7 @@ export default function Layout() {
       </a>
       <Header />
       <main id="main">
-        <Suspense fallback={<div className="page-loading bg-black text-gold" role="status">Loading</div>}>
+        <Suspense fallback={<div className="page-loading bg-black text-white" role="status">Loading</div>}>
           <Outlet />
         </Suspense>
       </main>

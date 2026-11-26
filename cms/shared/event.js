@@ -85,8 +85,14 @@ function block(value, max) {
 
 export function safeUrl(value) {
   const raw = String(value ?? "").trim();
-  if (!raw) return "";
-  if (raw.startsWith("/uploads/") && !raw.includes("..")) return raw.slice(0, 240);
+  if (!raw || raw.includes("..")) return "";
+  if (
+    raw.startsWith("/uploads/") ||
+    raw.startsWith("/api/media/") ||
+    raw.startsWith("/images/events/")
+  ) {
+    return raw.slice(0, 240);
+  }
   if (/^https?:\/\//i.test(raw)) return raw.slice(0, 400);
   return "";
 }
