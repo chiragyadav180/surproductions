@@ -172,7 +172,7 @@ function Speakers({ event }) {
             <article className="event-person" key={person.id}>
               <div className="event-person-photo">
                 {person.photo ? (
-                  <img src={person.photo} alt="" />
+                  <img src={person.photo} alt={person.name} />
                 ) : (
                   <span aria-hidden="true">{initials(person.name)}</span>
                 )}

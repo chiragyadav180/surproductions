@@ -4,7 +4,9 @@ import PageHero from "../components/PageHero";
 import Seo from "../components/Seo";
 import { EventCard, EventFeature } from "../components/EventView";
 import { EVENT_STATUSES } from "../../cms/shared/event.js";
-import { loadPublishedEvents } from "../data/publishedEvents";
+import { site } from "../config/site";
+import { loadPublishedEvents, snapshotEvents } from "../data/publishedEvents";
+import { eventsIndexDescription, eventsItemList } from "../../cms/shared/publicSeo.js";
 
 const filters = [
   { id: "all", label: "All" },
@@ -34,6 +36,7 @@ export default function Events() {
     };
   }, []);
 
+  const listed = state === "ready" ? events : snapshotEvents();
   const featured = events.find((event) => event.featured) || null;
   const visible = events.filter((event) => {
     if (featured && event.id === featured.id) return false;
@@ -46,8 +49,9 @@ export default function Events() {
     <article>
       <Seo
         title="Events"
-        description="Live events produced by SUR Productions. Award shows, festivals and large-scale experiences."
+        description={eventsIndexDescription(listed)}
         path="/events"
+        jsonLd={eventsItemList(listed, site.url)}
       />
       <PageHero
         kicker="Events"

@@ -1,5 +1,9 @@
 User-agent: *
 Allow: /
 
-# Add a Sitemap line with the confirmed production domain before launch.
-# Sitemap: https://your-domain.example/sitemap.xml
+Disallow: /cms/
+Disallow: /api/
+Disallow: /events/preview/
+
+# Site guide for answer engines: https://surproductions.com/llms.txt
+Sitemap: https://surproductions.com/sitemap.xml

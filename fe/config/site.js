@@ -1,13 +1,14 @@
+import { SITE_ORIGIN } from "../../cms/shared/siteOrigin.js";
+
 export const site = {
   name: "SUR Productions",
   description:
     "SUR Productions creates films, documentaries, events, digital work and communications. Stories, experiences and communication that make an impact.",
   /**
-   * Set VITE_SITE_URL to the live origin, with no trailing slash,
-   * once the production domain is confirmed. Canonical and social
-   * URLs stay off until then so a domain is never invented.
+   * Production builds use https://surproductions.com.
+   * VITE_SITE_URL can override it. Local dev leaves canonical URLs off.
    */
-  url: (import.meta.env.VITE_SITE_URL || "").replace(/\/$/, ""),
+  url: (import.meta.env.VITE_SITE_URL || (import.meta.env.PROD ? SITE_ORIGIN : "")).replace(/\/$/, ""),
   /**
    * Set VITE_CONTACT_ENDPOINT to an HTTPS URL that accepts POST JSON:
    * { name, email, phone, organisation, service, message }

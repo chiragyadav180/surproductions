@@ -1,9 +1,15 @@
 import { absoluteUrl, site } from "../config/site";
 
-export default function Seo({ title, description = site.description, path = "/", jsonLd }) {
+export default function Seo({
+  title,
+  description = site.description,
+  path = "/",
+  image = "/images/hero-stage.jpg",
+  jsonLd,
+}) {
   const fullTitle = title ? `${title} · ${site.name}` : site.name;
   const canonical = absoluteUrl(path);
-  const image = absoluteUrl("/images/hero-stage.jpg");
+  const socialImage = /^https?:\/\//i.test(image) ? image : absoluteUrl(image);
   const blocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 
   return (
@@ -15,11 +21,11 @@ export default function Seo({ title, description = site.description, path = "/",
       <meta property="og:description" content={description} />
       <meta property="og:type" content="website" />
       {canonical ? <meta property="og:url" content={canonical} /> : null}
-      {image ? <meta property="og:image" content={image} /> : null}
+      {socialImage ? <meta property="og:image" content={socialImage} /> : null}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={description} />
-      {image ? <meta name="twitter:image" content={image} /> : null}
+      {socialImage ? <meta name="twitter:image" content={socialImage} /> : null}
       {blocks.map((block) => (
         <script
           key={block["@type"]}

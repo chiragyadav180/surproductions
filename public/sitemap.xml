@@ -1,27 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  Production domain was not supplied.
-  Prefix every loc with the live origin before publishing this file.
--->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>/</loc></url>
-  <url><loc>/about</loc></url>
-  <url><loc>/services</loc></url>
-  <url><loc>/services/films</loc></url>
-  <url><loc>/services/documentaries</loc></url>
-  <url><loc>/services/events</loc></url>
-  <url><loc>/services/digital</loc></url>
-  <url><loc>/services/communications</loc></url>
-  <url><loc>/events</loc></url>
-  <url><loc>/work</loc></url>
-  <url><loc>/work/commercial-film</loc></url>
-  <url><loc>/work/documentary-story</loc></url>
-  <url><loc>/work/award-show</loc></url>
-  <url><loc>/work/live-event</loc></url>
-  <url><loc>/work/digital-campaign</loc></url>
-  <url><loc>/work/brand-communication</loc></url>
-  <url><loc>/clients</loc></url>
-  <url><loc>/contact</loc></url>
-  <url><loc>/privacy</loc></url>
-  <url><loc>/terms</loc></url>
+  <url><loc>https://surproductions.com/</loc></url>
+  <url><loc>https://surproductions.com/about</loc></url>
+  <url><loc>https://surproductions.com/services</loc></url>
+  <url><loc>https://surproductions.com/services/films</loc></url>
+  <url><loc>https://surproductions.com/services/documentaries</loc></url>
+  <url><loc>https://surproductions.com/services/events</loc></url>
+  <url><loc>https://surproductions.com/services/digital</loc></url>
+  <url><loc>https://surproductions.com/services/communications</loc></url>
+  <url><loc>https://surproductions.com/events</loc></url>
+  <url><loc>https://surproductions.com/events/chhattisgarh-rising-triple-e</loc><lastmod>2026-11-26</lastmod></url>
+  <url><loc>https://surproductions.com/work</loc></url>
+  <url><loc>https://surproductions.com/work/commercial-film</loc></url>
+  <url><loc>https://surproductions.com/work/documentary-story</loc></url>
+  <url><loc>https://surproductions.com/work/award-show</loc></url>
+  <url><loc>https://surproductions.com/work/live-event</loc></url>
+  <url><loc>https://surproductions.com/work/digital-campaign</loc></url>
+  <url><loc>https://surproductions.com/work/brand-communication</loc></url>
+  <url><loc>https://surproductions.com/clients</loc></url>
+  <url><loc>https://surproductions.com/contact</loc></url>
+  <url><loc>https://surproductions.com/privacy</loc></url>
+  <url><loc>https://surproductions.com/terms</loc></url>
 </urlset>

@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "concurrently -k \"vite\" \"node cms/server/index.js\"",
     "server": "node cms/server/index.js",
-    "build": "node scripts/export-public-events.mjs && vite build",
+    "build": "node scripts/export-public-events.mjs && node scripts/write-seo-files.mjs && vite build && node scripts/prerender-routes.mjs",
     "lint": "oxlint",
     "preview": "vite preview",
     "start": "node cms/server/start.js"

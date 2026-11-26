@@ -5,6 +5,8 @@ import { fileURLToPath } from "url";
 import express from "express";
 import multer from "multer";
 import { createId, normalizeEvent, slugify } from "../shared/event.js";
+import { llmsTxt, robotsTxt, sitemapXml } from "../shared/publicSeo.js";
+import { ALLOWED_ORIGINS, SITE_ORIGIN } from "../shared/siteOrigin.js";
 import { load, openMedia, paths, saveMedia, storageMode, update } from "./store.js";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
@@ -31,8 +33,28 @@ for (const method of ["get", "post", "put", "delete"]) {
     );
 }
 app.use((req, res, next) => {
+  const host = String(req.headers["x-forwarded-host"] || req.get("host") || "")
+    .split(",")[0]
+    .trim()
+    .toLowerCase();
+  if (host === "www.surproductions.com") {
+    return res.redirect(301, `${SITE_ORIGIN}${req.originalUrl}`);
+  }
+  next();
+});
+
+app.use((req, res, next) => {
   res.setHeader("X-Content-Type-Options", "nosniff");
   res.setHeader("Referrer-Policy", "same-origin");
+  const origin = req.get("origin");
+  if (origin && allowedOrigin(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Vary", "Origin");
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, x-csrf-token");
+  }
+  if (req.method === "OPTIONS") return res.sendStatus(204);
   next();
 });
 
@@ -269,8 +291,65 @@ app.get("/api/events/:slug", async (req, res) => {
   res.json({ event, related });
 });
 
+app.get("/sitemap.xml", async (req, res) => {
+  const data = await load();
+  res.type("application/xml");
+  res.setHeader("Cache-Control", "public, max-age=300");
+  res.send(sitemapXml(requestOrigin(req), publishedEvents(data)));
+});
+
+app.get("/robots.txt", (req, res) => {
+  res.type("text/plain");
+  res.setHeader("Cache-Control", "public, max-age=300");
+  res.send(robotsTxt(requestOrigin(req)));
+});
+
+app.get("/llms.txt", async (req, res) => {
+  const data = await load();
+  res.type("text/plain");
+  res.setHeader("Cache-Control", "public, max-age=300");
+  res.send(llmsTxt(requestOrigin(req), publishedEvents(data)));
+});
+
+function publishedEvents(data) {
+  return (data.events || []).filter((event) => event.publicationStatus === "published");
+}
+
+function allowedOrigin(origin) {
+  if (ALLOWED_ORIGINS.includes(origin)) return true;
+  const configured = String(process.env.VITE_SITE_URL || "").replace(/\/$/, "");
+  return Boolean(configured) && origin === configured;
+}
+
+function requestOrigin(req) {
+  const configured = String(process.env.VITE_SITE_URL || "").replace(/\/$/, "");
+  if (configured) return configured;
+  if (isProd) return SITE_ORIGIN;
+  const host = String(req.headers["x-forwarded-host"] || req.get("host") || "")
+    .split(",")[0]
+    .trim();
+  if (!/^[a-z0-9.-]+(?::\d+)?$/i.test(host)) return SITE_ORIGIN;
+  const forwarded = String(req.headers["x-forwarded-proto"] || req.protocol || "https")
+    .split(",")[0]
+    .trim();
+  const proto = forwarded === "http" ? "http" : "https";
+  return `${proto}://${host}`;
+}
+
 if (isProd && !process.env.VERCEL) {
   const dist = path.join(root, "dist");
+  app.get("/events/:slug", (req, res, next) => {
+    if (!/^[a-z0-9-]{1,80}$/.test(req.params.slug)) return next();
+    const file = path.resolve(dist, "events", req.params.slug, "index.html");
+    const eventsDir = path.resolve(dist, "events") + path.sep;
+    if (!file.startsWith(eventsDir) || !fs.existsSync(file)) return next();
+    res.sendFile(file);
+  });
+  app.get("/events", (req, res, next) => {
+    const file = path.join(dist, "events", "index.html");
+    if (!fs.existsSync(file)) return next();
+    res.sendFile(file);
+  });
   app.use(express.static(dist));
   app.use((req, res, next) => {
     if (req.method !== "GET" || req.path.startsWith("/api") || req.path.startsWith("/uploads")) return next();

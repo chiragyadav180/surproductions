@@ -3,7 +3,9 @@ import { useParams } from "react-router-dom";
 import Seo from "../components/Seo";
 import EventView from "../components/EventView";
 import NotFound from "./NotFound";
+import { site } from "../config/site";
 import { loadPublishedEvent } from "../data/publishedEvents";
+import { eventJsonLd, eventSeoDescription, eventSeoTitle } from "../../cms/shared/publicSeo.js";
 
 export default function EventDetail() {
   const { slug } = useParams();
@@ -55,9 +57,11 @@ export default function EventDetail() {
   return (
     <>
       <Seo
-        title={event.title}
-        description={event.shortDescription || event.subtitle || event.tagline || event.title}
+        title={eventSeoTitle(event)}
+        description={eventSeoDescription(event)}
         path={`/events/${event.slug}`}
+        image={event.heroImage || event.coverImage || "/images/hero-stage.jpg"}
+        jsonLd={eventJsonLd(event, site.url)}
       />
       <EventView event={event} related={related || []} />
     </>

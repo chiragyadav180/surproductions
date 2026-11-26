@@ -105,6 +105,8 @@ export default function Home() {
         </div>
       </section>
 
+      <FeaturedEvents />
+
       <section className="section" id="introduction">
         <div className="container about-grid">
           <Reveal className="about-media">
@@ -150,8 +152,6 @@ export default function Home() {
       </section>
 
       <WorkShowcase showCta />
-
-      <FeaturedEvents />
 
       <section className="section section-contact" id="enquire">
         <div className="container contact-layout">
