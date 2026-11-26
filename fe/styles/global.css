@@ -2685,25 +2685,25 @@ main > article {
 }
 
 .event-hero.has-image .event-poster {
+  position: relative;
   width: 100%;
   height: 100%;
+  min-height: 100%;
+  aspect-ratio: 16 / 9;
   margin: 0;
-  display: grid;
-  place-items: center;
   overflow: hidden;
   border-radius: 1.15rem;
   border: 1px solid rgba(214, 160, 68, 0.42);
-  background:
-    radial-gradient(ellipse at 50% 0%, rgba(214, 160, 68, 0.16), transparent 55%),
-    #050505;
+  background: #050505;
   box-shadow: 0 22px 50px rgba(0, 0, 0, 0.4);
 }
 
 .event-hero.has-image .event-poster img {
+  position: absolute;
+  inset: 0;
   width: 100%;
-  height: auto;
-  max-height: none;
-  object-fit: contain;
+  height: 100%;
+  object-fit: cover;
   object-position: center;
 }
 
@@ -3019,6 +3019,11 @@ main > article {
     gap: 1.25rem 1.35rem;
   }
 
+  .event-hero.has-image .event-poster {
+    aspect-ratio: auto;
+    align-self: stretch;
+  }
+
   .event-page .event-block:has(.event-section-media) {
     display: grid;
     grid-template-columns: minmax(220px, 0.82fr) minmax(0, 1.18fr);
@@ -3101,5 +3106,143 @@ main > article {
   .event-page .event-card-grid,
   .event-page .event-people {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.home-events.section {
+  padding-top: clamp(2rem, 4vw, 3.25rem);
+  padding-bottom: clamp(1.75rem, 3.5vw, 2.75rem);
+}
+
+.home-events-head {
+  align-items: flex-end;
+  margin-bottom: 1.25rem;
+}
+
+.home-events-head h2 {
+  margin-bottom: 0;
+}
+
+.home-events-head .text-link {
+  margin-bottom: 0.35rem;
+}
+
+.home-events-list {
+  display: grid;
+  gap: 1.15rem;
+  align-items: stretch;
+}
+
+.home-event {
+  min-width: 0;
+}
+
+.home-event a {
+  display: grid;
+  gap: 1rem;
+  align-items: center;
+  height: 100%;
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+.home-event-media {
+  min-width: 0;
+  overflow: hidden;
+  border-radius: 1.05rem;
+  border: 1px solid rgba(214, 160, 68, 0.38);
+  background: #050505;
+}
+
+.home-event-media img,
+.home-event-media .event-panel-fallback {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.home-event-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.home-event-copy .kicker {
+  margin-bottom: 0.45rem;
+}
+
+.home-event-copy h3 {
+  margin: 0 0 0.45rem;
+  font-size: clamp(1.7rem, 1.15rem + 1.2vw, 2.6rem);
+  line-height: 1.05;
+}
+
+.home-event-subtitle,
+.home-event-meta,
+.home-event-copy > p {
+  margin: 0 0 0.7rem;
+  color: #ffffff;
+}
+
+.home-event-subtitle {
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  font-weight: 650;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.home-event-meta {
+  font-size: 0.95rem;
+}
+
+.home-event-copy > p:last-of-type {
+  margin-bottom: 0.85rem;
+  max-width: 42rem;
+  line-height: 1.6;
+}
+
+.home-event-copy .text-link {
+  margin-top: auto;
+}
+
+@media (min-width: 840px) {
+  .home-events-list.is-single .home-event a {
+    grid-template-columns: minmax(0, 1.45fr) minmax(17rem, 0.72fr);
+    gap: 1.5rem 2rem;
+    align-items: center;
+  }
+
+  .home-events-list.is-pair {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+
+  .home-events-list.is-pair .home-event a,
+  .home-events-list.is-trio .home-event a {
+    align-items: start;
+  }
+}
+
+@media (min-width: 1100px) {
+  .home-events-list.is-trio {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 839px) {
+  .home-events-head {
+    align-items: flex-start;
+    gap: 0.35rem;
+  }
+
+  .home-events-head .text-link {
+    margin-bottom: 0;
+  }
+
+  .home-event-copy h3 {
+    font-size: clamp(1.55rem, 7vw, 2rem);
   }
 }
