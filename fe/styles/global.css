@@ -2702,7 +2702,7 @@ main > article {
 .event-hero.has-image .event-poster img {
   width: 100%;
   height: auto;
-  max-height: min(72vh, 640px);
+  max-height: none;
   object-fit: contain;
   object-position: center;
 }
