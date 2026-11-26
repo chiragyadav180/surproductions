@@ -141,11 +141,6 @@ function Login() {
         <button className="btn btn-gold" type="submit" disabled={busy}>
           {busy ? "Signing in" : "Sign in"}
         </button>
-        {import.meta.env.DEV ? (
-          <p className="cms-hint">
-            Local sign-in from cms/.env: admin@sur.local / SurAdmin2026!
-          </p>
-        ) : null}
         <Link to="/">Back to the website</Link>
       </form>
     </main>

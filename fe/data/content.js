@@ -219,20 +219,6 @@ export const projectCategories = [
 /** Empty until real client marks are supplied. Do not invent names. */
 export const clients = [];
 
-/** Home marquee placeholders only. Replace with confirmed marks when supplied. */
-export const collaborators = [
-  { name: "Northframe" },
-  { name: "Lumen Stage" },
-  { name: "Goldline" },
-  { name: "Arclight" },
-  { name: "Velvet Reel" },
-  { name: "Kinegraph" },
-  { name: "Marque" },
-  { name: "Feverlight" },
-  { name: "Studio Atlas" },
-  { name: "Daybreak" },
-];
-
 export const clientSlotCount = 8;
 
 export const principles = [

@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import ContactForm from "../components/ContactForm";
 import Reveal from "../components/Reveal";
 import Seo from "../components/Seo";
-import CollaboratorMarquee from "../components/CollaboratorMarquee";
 import WorkShowcase from "../components/WorkShowcase";
 import FeaturedEvents from "../components/FeaturedEvents";
 import { site } from "../config/site";
@@ -149,8 +148,6 @@ export default function Home() {
           ))}
         </div>
       </section>
-
-      <CollaboratorMarquee />
 
       <WorkShowcase showCta />
 

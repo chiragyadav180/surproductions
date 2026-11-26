@@ -283,8 +283,7 @@
   resize: vertical;
 }
 
-.cms-field small,
-.cms-hint {
+.cms-field small {
   color: #6d665c;
   font-size: 0.8rem;
 }
