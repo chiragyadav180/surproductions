@@ -12,9 +12,9 @@ import { load, openMedia, paths, saveMedia, storageMode, update } from "./store.
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 loadEnv(path.join(root, "cms", ".env"));
 
-const PORT = Number(process.env.PORT || 3001);
-const SESSION_MS = 1000 * 60 * 60 * 12;
 const isProd = process.env.NODE_ENV === "production";
+const PORT = Number(process.env.PORT || (isProd ? 3000 : 3001));
+const SESSION_MS = 1000 * 60 * 60 * 12;
 
 const app = express();
 app.disable("x-powered-by");
@@ -373,8 +373,8 @@ export default app;
 
 if (!process.env.VERCEL && !globalThis.__surListening) {
   globalThis.__surListening = true;
-  app.listen(PORT, () => {
-    console.log(`SUR API listening on http://localhost:${PORT}`);
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`SUR API listening on http://0.0.0.0:${PORT}`);
   });
 }
 
