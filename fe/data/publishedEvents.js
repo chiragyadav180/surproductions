@@ -15,10 +15,19 @@ export function snapshotEvents() {
 }
 
 async function fetchJson(url) {
-  const response = await fetch(url, { headers: { Accept: "application/json" } });
-  const type = response.headers.get("content-type") || "";
-  if (!type.includes("json")) return null;
-  return { status: response.status, data: await response.json() };
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 4000);
+  try {
+    const response = await fetch(url, {
+      headers: { Accept: "application/json" },
+      signal: controller.signal,
+    });
+    const type = response.headers.get("content-type") || "";
+    if (!type.includes("json")) return null;
+    return { status: response.status, data: await response.json() };
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 /** Live CMS when the API is running. Committed snapshot on static hosts such as Vercel. */

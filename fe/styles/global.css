@@ -2217,36 +2217,87 @@ main > article {
   background: var(--gold);
 }
 
-.event-facts {
-  border: 1px solid var(--line);
-  background: rgba(17, 17, 17, 0.72);
-  padding: 1.15rem 1.2rem 0.4rem;
+.event-page .event-details {
+  padding-top: clamp(2.25rem, 5vw, 4rem);
+  padding-bottom: clamp(1.5rem, 4vw, 3rem);
 }
 
-.event-facts dl {
-  margin: 0;
+.event-fact-grid {
+  display: grid;
+  gap: 0.85rem;
 }
 
-.event-facts dt {
-  display: flex;
-  justify-content: space-between;
-  gap: 0.75rem;
-  color: #ffffff;
+.event-fact {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 0.9rem;
+  row-gap: 0.15rem;
+  align-content: start;
+  min-width: 0;
+  padding: 1.15rem 1.15rem 1.25rem;
+  border: 1px solid rgba(214, 160, 68, 0.34);
+  border-radius: 1.15rem;
+  background:
+    radial-gradient(120% 90% at 0% 0%, rgba(214, 160, 68, 0.18), transparent 48%),
+    linear-gradient(180deg, #171512 0%, #0d0c0b 100%);
+  box-shadow: inset 0 1px 0 rgba(244, 196, 107, 0.22);
+}
+
+.event-fact-icon {
+  grid-row: 1 / span 2;
+  display: grid;
+  place-items: center;
+  width: 2.65rem;
+  height: 2.65rem;
+  border-radius: 0.85rem;
+  border: 1px solid rgba(214, 160, 68, 0.42);
+  background: rgba(214, 160, 68, 0.12);
+  color: var(--gold-light);
+}
+
+.event-fact-icon svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.event-fact h3 {
+  margin: 0.2rem 0 0;
+  color: var(--gold-light);
+  font-family: var(--sans);
   font-size: 0.72rem;
   font-weight: 650;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.16em;
+  line-height: 1.2;
   text-transform: uppercase;
 }
 
-.event-facts dt span {
-  color: var(--muted);
-  letter-spacing: 0.08em;
+.event-fact p {
+  margin: 0;
+  color: #ffffff;
+  font-family: var(--serif);
+  font-size: clamp(1.28rem, 1.05rem + 0.55vw, 1.7rem);
+  font-weight: 500;
+  line-height: 1.18;
+  overflow-wrap: anywhere;
 }
 
-.event-facts dd {
-  margin: 0.25rem 0 1rem;
-  color: var(--cream);
-  overflow-wrap: anywhere;
+.event-fact.is-wide p {
+  max-width: 62rem;
+  color: #f7f4ee;
+  font-family: var(--sans);
+  font-size: 1.02rem;
+  font-weight: 450;
+  line-height: 1.6;
+}
+
+@media (min-width: 680px) {
+  .event-fact-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .event-fact.is-wide {
+    grid-column: 1 / -1;
+  }
 }
 
 .event-section-grid,
@@ -2651,11 +2702,6 @@ main > article {
   .event-feature a {
     grid-template-columns: minmax(260px, 0.9fr) minmax(0, 1.1fr);
   }
-
-  .event-facts {
-    position: sticky;
-    top: calc(var(--header-h) + 1rem);
-  }
 }
 
 @media (min-width: 1024px) {
@@ -2718,7 +2764,7 @@ main > article {
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   object-position: center;
 }
 
@@ -2827,9 +2873,9 @@ main > article {
 }
 
 .event-section-kicker .kicker {
-  letter-spacing: 0.18em;
-  line-height: 1.2;
-  white-space: nowrap;
+  letter-spacing: 0.14em;
+  line-height: 1.3;
+  white-space: normal;
 }
 
 .event-page .event-panel,
@@ -3035,8 +3081,10 @@ main > article {
   }
 
   .event-hero.has-image .event-poster {
-    aspect-ratio: auto;
-    align-self: stretch;
+    aspect-ratio: 16 / 9;
+    align-self: start;
+    height: auto;
+    min-height: 0;
   }
 
   .event-page .event-block:has(.event-section-media) {
@@ -3112,9 +3160,19 @@ main > article {
   }
 
   .event-page .event-person {
-    grid-template-columns: 6.75rem minmax(0, 1fr);
-    gap: 0.85rem;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
     align-items: start;
+  }
+
+  .event-page .event-person-photo.is-initials {
+    justify-self: center;
+    margin-inline: auto;
+  }
+
+  .event-page .event-person-photo:not(.is-initials) {
+    width: 100%;
+    justify-self: stretch;
   }
 
   .event-page .event-card-copy h3,
@@ -3145,6 +3203,33 @@ main > article {
     min-height: calc(2 * 1.2em);
   }
 
+  .event-page .event-person:has(> .event-person-photo:not(.is-initials)) {
+    align-items: stretch;
+    grid-template-columns: 11.5rem minmax(0, 1fr);
+    gap: 0 1rem;
+    padding: 0.9rem;
+  }
+
+  .event-page .event-person-photo:not(.is-initials) {
+    align-self: stretch;
+    position: relative;
+    width: 100%;
+    height: auto;
+    aspect-ratio: auto;
+    overflow: hidden;
+    border-radius: 0.85rem;
+  }
+
+  .event-page .event-person-photo:not(.is-initials) img {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 18%;
+  }
+
   .event-page .event-person .event-role {
     line-height: 1.35;
     min-height: calc(2 * 1.35em);
@@ -3154,6 +3239,10 @@ main > article {
 @media (min-width: 1100px) {
   .event-page .event-person {
     grid-template-columns: 9rem minmax(0, 1fr);
+  }
+
+  .event-page .event-person:has(> .event-person-photo:not(.is-initials)) {
+    grid-template-columns: 13rem minmax(0, 1fr);
   }
 }
 

@@ -140,12 +140,16 @@ function clipText(text, max) {
 }
 
 export function eventSeoTitle(event) {
+  const custom = String(event?.seoTitle || "").trim();
+  if (custom) return custom;
   const heading = upcomingEventHeading(event);
   if (heading) return `${heading}: ${event.title}`;
   return event?.city ? `${event.title} in ${event.city}` : event?.title || "Event";
 }
 
 export function eventSeoDescription(event) {
+  const custom = String(event?.seoDescription || "").replace(/\s+/g, " ").trim();
+  if (custom) return clipText(custom, 300);
   const place = [event?.city, event?.state, event?.country].filter(Boolean).join(", ");
   const when = formatEventWhen(event || {});
   const whenLabel = when ? (event?.dateStatus === "tentative" ? `${when}, tentative` : when) : "";
@@ -176,7 +180,12 @@ export function absolutePublicUrl(origin, path) {
 }
 
 export function eventJsonLd(event, origin = "") {
-  const placeName = [event.venue, event.city].filter(Boolean).join(", ") || event.city || event.title;
+  const venueName = event.venue
+    ? event.venueStatus === "proposed"
+      ? `${event.venue} (proposed)`
+      : event.venue
+    : "";
+  const placeName = [venueName, event.city].filter(Boolean).join(", ") || event.city || event.title;
   const imagePath = event.heroImage || event.coverImage || "";
   const image = /^https?:\/\//i.test(imagePath)
     ? imagePath
@@ -187,7 +196,7 @@ export function eventJsonLd(event, origin = "") {
     "@context": "https://schema.org",
     "@type": "Event",
     name: event.title,
-    description: eventSeoDescription(event),
+    description: [eventSeoDescription(event), event.presentedBy].filter(Boolean).join(" "),
     eventStatus: "https://schema.org/EventScheduled",
     eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
     location: {
@@ -212,7 +221,12 @@ export function eventJsonLd(event, origin = "") {
   if (event.dateStatus === "confirmed" && event.startDate) data.startDate = event.startDate;
   if (event.dateStatus === "confirmed" && event.endDate) data.endDate = event.endDate;
   const performers = (event.speakers || [])
-    .filter((person) => person.name && person.name.toLowerCase() !== "special guest")
+    .filter(
+      (person) =>
+        person.confirmation === "confirmed" &&
+        person.name &&
+        !/session|guest/i.test(person.name),
+    )
     .map((person) => ({
       "@type": "Person",
       name: person.name,

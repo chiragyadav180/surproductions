@@ -37,6 +37,18 @@ export const REGISTRATION_STATUSES = [
   { value: "closed", label: "Closed" },
 ];
 
+export const VENUE_STATUSES = [
+  { value: "unset", label: "Not labelled" },
+  { value: "proposed", label: "Proposed" },
+  { value: "confirmed", label: "Confirmed" },
+];
+
+export const SECTION_PLACEMENTS = [
+  { value: "opening", label: "Opening, before speakers" },
+  { value: "after-speakers", label: "After speakers" },
+  { value: "after-experiences", label: "After experiences" },
+];
+
 export const PAGE_BLOCKS = [
   { key: "story", label: "Sections" },
   { key: "highlights", label: "Highlights" },
@@ -120,6 +132,7 @@ export function blankSection() {
     image: "",
     imageAlt: "",
     icon: "",
+    placement: "opening",
     visible: true,
   };
 }
@@ -185,6 +198,18 @@ export function blankEvent() {
     shortDescription: "",
     description: "",
     tagline: "",
+    presentedBy: "",
+    formatLabel: "",
+    attendanceText: "",
+    venueStatus: "unset",
+    disclaimer: "",
+    seoTitle: "",
+    seoDescription: "",
+    seoKeywords: "",
+    speakersTitle: "",
+    speakersNote: "",
+    zonesTitle: "",
+    zonesIntro: "",
     eventStatus: "upcoming",
     publicationStatus: "draft",
     featured: false,
@@ -264,6 +289,22 @@ export function normalizeEvent(input) {
     shortDescription: block(source.shortDescription, 400),
     description: block(source.description, 6000),
     tagline: text(source.tagline, 220),
+    presentedBy: text(source.presentedBy, 400),
+    formatLabel: text(source.formatLabel, 160),
+    attendanceText: text(source.attendanceText, 240),
+    venueStatus: oneOf(
+      source.venueStatus,
+      VENUE_STATUSES.map((item) => item.value),
+      "unset",
+    ),
+    disclaimer: block(source.disclaimer, 800),
+    seoTitle: text(source.seoTitle, 180),
+    seoDescription: text(source.seoDescription, 320),
+    seoKeywords: text(source.seoKeywords, 300),
+    speakersTitle: text(source.speakersTitle, 160),
+    speakersNote: text(source.speakersNote, 320),
+    zonesTitle: text(source.zonesTitle, 160),
+    zonesIntro: text(source.zonesIntro, 400),
     eventStatus: oneOf(
       source.eventStatus,
       EVENT_STATUSES.map((item) => item.value),
@@ -313,6 +354,11 @@ export function normalizeEvent(input) {
       image: safeUrl(item.image),
       imageAlt: text(item.imageAlt, 180),
       icon: text(item.icon, 40),
+      placement: oneOf(
+        item.placement,
+        SECTION_PLACEMENTS.map((entry) => entry.value),
+        "opening",
+      ),
       visible: item.visible !== false,
     })),
     highlights: listOf(source.highlights, 24, (item) => ({
@@ -478,8 +524,13 @@ export function formatEventTime(event) {
 }
 
 export function formatEventPlace(event) {
+  const venue = event.venue
+    ? event.venueStatus === "proposed"
+      ? `${event.venue} (proposed)`
+      : event.venue
+    : "";
   const locality = [event.city, event.state, event.country].filter(Boolean).join(", ");
-  return [event.venue, locality].filter(Boolean);
+  return [venue, locality].filter(Boolean);
 }
 
 export function eventImage(event) {

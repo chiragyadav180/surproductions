@@ -9,6 +9,8 @@ import {
   PUBLICATION_STATUSES,
   REGISTRATION_STATUSES,
   SCHEDULE_STATUSES,
+  SECTION_PLACEMENTS,
+  VENUE_STATUSES,
   blankAudience,
   blankBenefit,
   blankEvent,
@@ -138,6 +140,25 @@ export default function EventEditor({ id }) {
         <Area label="Short description" value={event.shortDescription} onChange={(shortDescription) => patch({ shortDescription })} />
         <Area label="Full description" value={event.description} onChange={(description) => patch({ description })} rows={6} />
         <Field label="Tagline" value={event.tagline} onChange={(tagline) => patch({ tagline })} />
+        <Area
+          label="Organising credit"
+          value={event.presentedBy}
+          onChange={(presentedBy) => patch({ presentedBy })}
+          rows={3}
+          hint="Use the approved sentence. Do not add a government role that has not been confirmed in writing."
+        />
+        <Area
+          label="Closing note"
+          value={event.disclaimer}
+          onChange={(disclaimer) => patch({ disclaimer })}
+          rows={3}
+          hint="Shown at the end of the page. Keep unconfirmed details marked as proposed."
+        />
+        <div className="cms-grid">
+          <Field label="SEO title" value={event.seoTitle} onChange={(seoTitle) => patch({ seoTitle })} hint="Leave blank to use the automatic title." />
+          <Field label="SEO keywords" value={event.seoKeywords} onChange={(seoKeywords) => patch({ seoKeywords })} />
+        </div>
+        <Area label="SEO description" value={event.seoDescription} onChange={(seoDescription) => patch({ seoDescription })} rows={3} hint="Leave blank to build one from the short description." />
         <div className="cms-checks">
           <label>
             <input type="checkbox" checked={event.featured} onChange={(e) => patch({ featured: e.target.checked })} />
@@ -152,16 +173,19 @@ export default function EventEditor({ id }) {
 
       <section className="cms-panel">
         <h2>Date and location</h2>
-        <p className="cms-note">Leave the date and venue empty until they are confirmed. A tentative line is shown instead of a made-up day.</p>
+        <p className="cms-note">Keep the date and venue labelled as proposed until they are formally locked. Do not publish a made-up day.</p>
         <div className="cms-grid">
           <Select label="Date status" value={event.dateStatus} options={DATE_STATUSES} onChange={(dateStatus) => patch({ dateStatus })} />
-          <Field label="Tentative date text" value={event.tentativeDateText} onChange={(tentativeDateText) => patch({ tentativeDateText })} hint="Example: 19 or 20 December 2026" />
+          <Field label="Tentative date text" value={event.tentativeDateText} onChange={(tentativeDateText) => patch({ tentativeDateText })} hint="Example: 20 December 2026, proposed" />
           <Field label="Start date" type="date" value={event.startDate} onChange={(startDate) => patch({ startDate })} />
           <Field label="End date" type="date" value={event.endDate} onChange={(endDate) => patch({ endDate })} />
           <Field label="Start time" type="time" value={event.startTime} onChange={(startTime) => patch({ startTime })} />
           <Field label="End time" type="time" value={event.endTime} onChange={(endTime) => patch({ endTime })} />
           <Field label="Timezone" value={event.timezone} onChange={(timezone) => patch({ timezone })} />
           <Field label="Venue" value={event.venue} onChange={(venue) => patch({ venue })} />
+          <Select label="Venue status" value={event.venueStatus || "unset"} options={VENUE_STATUSES} onChange={(venueStatus) => patch({ venueStatus })} />
+          <Field label="Format" value={event.formatLabel} onChange={(formatLabel) => patch({ formatLabel })} hint="Example: One-day conclave and experience festival" />
+          <Field label="Expected gathering" value={event.attendanceText} onChange={(attendanceText) => patch({ attendanceText })} hint="Keep this expected, not a promise." />
           <Field label="City" value={event.city} onChange={(city) => patch({ city })} />
           <Field label="State" value={event.state} onChange={(state) => patch({ state })} />
           <Field label="Country" value={event.country} onChange={(country) => patch({ country })} />
@@ -208,6 +232,7 @@ export default function EventEditor({ id }) {
               <Field label="Heading" value={item.heading} onChange={(heading) => update({ heading })} />
               <Field label="Subtitle" value={item.subtitle} onChange={(subtitle) => update({ subtitle })} />
               <Field label="Label" value={item.icon} onChange={(icon) => update({ icon })} hint="Short kicker, optional." />
+              <Select label="Placement" value={item.placement || "opening"} options={SECTION_PLACEMENTS} onChange={(placement) => update({ placement })} />
               <Area label="Description" value={item.body} onChange={(body) => update({ body })} rows={5} />
               <ImageField label="Image" value={item.image} onChange={(image) => update({ image })} />
               <Field label="Image alt text" value={item.imageAlt} onChange={(imageAlt) => update({ imageAlt })} />
@@ -239,7 +264,11 @@ export default function EventEditor({ id }) {
 
       <section className="cms-panel">
         <h2>Speakers and guests</h2>
-        <p className="cms-note">Proposed guests stay marked as proposed. They are not shown as confirmed.</p>
+        <p className="cms-note">Proposed guests stay marked as proposed. They are not shown as confirmed. A business session can be one card while the names are still under consideration.</p>
+        <div className="cms-grid">
+          <Field label="Section heading" value={event.speakersTitle} onChange={(speakersTitle) => patch({ speakersTitle })} hint="Leave blank for the standard heading." />
+          <Field label="Confirmation note" value={event.speakersNote} onChange={(speakersNote) => patch({ speakersNote })} hint="Shown when a speaker is still proposed." />
+        </div>
         <Repeatable
           title="Person"
           items={event.speakers}
@@ -287,6 +316,8 @@ export default function EventEditor({ id }) {
 
       <section className="cms-panel">
         <h2>Experience zones</h2>
+        <Field label="Section heading" value={event.zonesTitle} onChange={(zonesTitle) => patch({ zonesTitle })} hint="Leave blank to title this block Experiences." />
+        <Area label="Introduction" value={event.zonesIntro} onChange={(zonesIntro) => patch({ zonesIntro })} rows={3} />
         <Repeatable
           title="Zone"
           items={event.zones}
@@ -353,6 +384,7 @@ export default function EventEditor({ id }) {
 
       <section className="cms-panel">
         <h2>Registration and enquiry</h2>
+        <p className="cms-note">Leave the links empty until audience registration, sponsorship, exhibition and media channels are actually active. Until then the public page offers Stay updated and does not publish a contact route.</p>
         <div className="cms-grid">
           <Select label="Registration status" value={event.registrationStatus} options={REGISTRATION_STATUSES} onChange={(registrationStatus) => patch({ registrationStatus })} />
           <Field label="Button text" value={event.ctaText} onChange={(ctaText) => patch({ ctaText })} />
@@ -468,11 +500,12 @@ function Field({ label, value, onChange, type = "text", hint, required }) {
   );
 }
 
-function Area({ label, value, onChange, rows = 4 }) {
+function Area({ label, value, onChange, rows = 4, hint }) {
   return (
     <label className="cms-field cms-field-wide">
       <span>{label}</span>
       <textarea rows={rows} value={value || ""} onChange={(event) => onChange(event.target.value)} />
+      {hint ? <small>{hint}</small> : null}
     </label>
   );
 }

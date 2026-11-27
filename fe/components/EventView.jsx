@@ -7,6 +7,7 @@ import {
   formatEventPlace,
   formatEventWhen,
   labelFor,
+  slugify,
   visiblePageBlocks,
 } from "../../cms/shared/event.js";
 
@@ -17,7 +18,16 @@ export default function EventView({ event, related = [] }) {
   const hero = event.heroImage || event.coverImage || "";
   const intro = (event.description || event.shortDescription || "").trim();
   const where = place.filter(Boolean).join(" · ");
-  const whenLabel = when && event.dateStatus === "tentative" ? `${when} · Tentative` : when;
+  const whenLabel =
+    when && event.dateStatus === "tentative" && !/proposed|tentative/i.test(when)
+      ? `${when} · Tentative`
+      : when;
+  const facts = eventFacts(event, when, place);
+  const action = heroAction(event);
+  const storyVisible = blocks.some((block) => block.key === "story");
+  const speakersShown = blocks.some((block) => block.key === "speakers");
+  const zonesShown = blocks.some((block) => block.key === "zones");
+  const audienceShown = blocks.some((block) => block.key === "audience");
 
   return (
     <article className="event-page">
@@ -34,14 +44,29 @@ export default function EventView({ event, related = [] }) {
           <h1>{event.title}</h1>
           {event.subtitle ? <p className="event-subtitle">{event.subtitle}</p> : null}
           {event.tagline ? <p className="event-tagline">{event.tagline}</p> : null}
+          {event.presentedBy ? <p className="event-credit">{event.presentedBy}</p> : null}
           <ul className="event-hero-meta">
             <li>{labelFor(EVENT_STATUSES, event.eventStatus)}</li>
             {whenLabel ? <li>{whenLabel}</li> : null}
             {where ? <li>{where}</li> : null}
           </ul>
+          {action ? (
+            <div className="event-hero-actions">
+              <a
+                className="btn btn-gold has-arrow"
+                href={action.href}
+                target={action.external ? "_blank" : undefined}
+                rel={action.external ? "noreferrer" : undefined}
+              >
+                {action.label}
+              </a>
+            </div>
+          ) : null}
         </div>
         </div>
       </header>
+
+      {facts.length ? <EventFacts facts={facts} /> : null}
 
       {intro ? (
         <section className="section event-intro">
@@ -61,8 +86,19 @@ export default function EventView({ event, related = [] }) {
       ) : null}
 
       {blocks.map((block) => (
-        <EventBlock key={block.key} block={block.key} event={event} />
+        <EventBlock
+          key={block.key}
+          block={block.key}
+          event={event}
+          storyVisible={storyVisible}
+          speakersShown={speakersShown}
+          audienceShown={audienceShown}
+        />
       ))}
+      {storyVisible && !zonesShown && !audienceShown ? (
+        <Story event={event} placement="after-experiences" startIndex={placedCount(event, "after-experiences")} />
+      ) : null}
+      {!blocks.some((block) => block.key === "cta") ? <Closing event={event} /> : null}
 
       {related.length ? (
         <section className="section" aria-labelledby="related-events">
@@ -85,13 +121,49 @@ export default function EventView({ event, related = [] }) {
   );
 }
 
-function EventBlock({ block, event }) {
-  if (block === "story") return <Story event={event} />;
+function EventBlock({ block, event, storyVisible, speakersShown, audienceShown }) {
+  if (block === "story") {
+    return (
+      <>
+        <Story event={event} placement="opening" />
+        {storyVisible && !speakersShown ? (
+          <Story event={event} placement="after-speakers" startIndex={placedCount(event, "after-speakers")} />
+        ) : null}
+      </>
+    );
+  }
   if (block === "highlights") return <Highlights event={event} />;
-  if (block === "speakers") return <Speakers event={event} />;
+  if (block === "speakers") {
+    return (
+      <>
+        <Speakers event={event} />
+        {storyVisible ? (
+          <Story event={event} placement="after-speakers" startIndex={placedCount(event, "after-speakers")} />
+        ) : null}
+      </>
+    );
+  }
   if (block === "agenda") return <Agenda event={event} />;
-  if (block === "zones") return <Zones event={event} />;
-  if (block === "audience") return <Audience event={event} />;
+  if (block === "zones") {
+    return (
+      <>
+        <Zones event={event} />
+        {storyVisible && !audienceShown ? (
+          <Story event={event} placement="after-experiences" startIndex={placedCount(event, "after-experiences")} />
+        ) : null}
+      </>
+    );
+  }
+  if (block === "audience") {
+    return (
+      <>
+        <Audience event={event} />
+        {storyVisible ? (
+          <Story event={event} placement="after-experiences" startIndex={placedCount(event, "after-experiences")} />
+        ) : null}
+      </>
+    );
+  }
   if (block === "benefits") return <Benefits event={event} />;
   if (block === "media") return <MediaNotes event={event} />;
   if (block === "gallery") return <Gallery event={event} />;
@@ -99,14 +171,18 @@ function EventBlock({ block, event }) {
   return null;
 }
 
-function Story({ event }) {
-  const sections = (event.sections || []).filter(
-    (item) => item.visible !== false && (item.heading || item.body || item.image),
-  );
+function Story({ event, placement, startIndex = 0 }) {
+  const sections = sectionsFor(event, placement);
+  if (!sections.length) return null;
   return (
     <div className="event-sections">
       {sections.map((section, index) => (
-        <section className="section event-section" key={section.id} aria-labelledby={`section-${section.id}`}>
+        <section
+          className="section event-section"
+          key={section.id}
+          id={slugify(section.heading) || section.id}
+          aria-labelledby={`section-${section.id}`}
+        >
           <div className="container event-block">
             {section.image ? (
               <figure className="event-section-media">
@@ -115,7 +191,7 @@ function Story({ event }) {
             ) : null}
             <div className="event-block-copy">
               <div className="event-section-kicker">
-                <p className="index">{String(index + 1).padStart(2, "0")}</p>
+                <p className="index">{String(startIndex + index + 1).padStart(2, "0")}</p>
                 {section.icon ? <p className="kicker">{section.icon}</p> : null}
               </div>
               {section.heading ? <h2 id={`section-${section.id}`}>{section.heading}</h2> : <h2 id={`section-${section.id}`} className="sr-only">Section</h2>}
@@ -165,12 +241,13 @@ function Speakers({ event }) {
       <div className="container">
         <div className="section-head">
           <p className="kicker">Speakers and guests</p>
-          <h2 id="event-speakers">Voices on the programme</h2>
+          <h2 id="event-speakers">{event.speakersTitle || "Voices on the programme"}</h2>
+          <SpeakerNote event={event} people={people} />
         </div>
         <div className="event-people">
           {people.map((person) => (
             <article className="event-person" key={person.id}>
-              <div className="event-person-photo">
+              <div className={`event-person-photo${person.photo ? "" : " is-initials"}`}>
                 {person.photo ? (
                   <img src={person.photo} alt={person.name} />
                 ) : (
@@ -234,15 +311,18 @@ function Zones({ event }) {
     <section className="section" aria-labelledby="event-zones">
       <div className="container">
         <div className="section-head">
-          <p className="kicker">Experience</p>
-          <h2 id="event-zones">Experience zones</h2>
+          <p className="kicker">Experiences</p>
+          <h2 id="event-zones">{event.zonesTitle || "Experiences"}</h2>
+          {event.zonesIntro ? <p className="event-section-lead">{event.zonesIntro}</p> : null}
         </div>
         <div className="event-card-grid">
           {zones.map((zone) => (
             <article className="event-panel" key={zone.id}>
-              <div className="event-panel-media">
-                {zone.image ? <img src={zone.image} alt="" /> : <span className="event-panel-fallback" aria-hidden="true" />}
-              </div>
+              {zone.image ? (
+                <div className="event-panel-media">
+                  <img src={zone.image} alt="" />
+                </div>
+              ) : null}
               {zone.category ? <p className="kicker">{zone.category}</p> : null}
               {zone.title ? <h3>{zone.title}</h3> : null}
               {zone.description ? <p>{zone.description}</p> : null}
@@ -373,17 +453,22 @@ function Gallery({ event }) {
 }
 
 function CallToAction({ event }) {
-  const actions = [
-    event.registrationUrl ? ["Register", event.registrationUrl] : null,
-    event.ticketUrl ? ["Tickets", event.ticketUrl] : null,
-    event.enquiryUrl ? ["Enquire", event.enquiryUrl] : null,
-  ].filter(Boolean);
+  const actions = ctaLinks(event);
   return (
-    <section className="section event-cta-band" aria-labelledby="event-cta">
+    <section className="section event-cta-band" id="event-cta" aria-labelledby="event-cta">
       <div className="container event-cta-inner">
         <div>
-          <p className="kicker">{labelFor(REGISTRATION_STATUSES, event.registrationStatus) || "Attend"}</p>
-          <h2 id="event-cta">{event.ctaText || "Ask about this event"}</h2>
+          <p className="kicker">{actions.length ? labelFor(REGISTRATION_STATUSES, event.registrationStatus) || "Attend" : "Subject to confirmation"}</p>
+          <h2 id="event-cta">{event.ctaText || "Stay updated"}</h2>
+          {event.tagline ? <p className="event-tagline">{event.tagline}</p> : null}
+          {event.disclaimer ? <p>{event.disclaimer}</p> : null}
+          {actions.length ? null : (
+            <p>
+              Audience registration, sponsorship, exhibition and media enquiries will be published
+              here only after those channels are active.
+            </p>
+          )}
+          <ClosingLines event={event} />
         </div>
         {actions.length ? (
           <div className="event-cta-actions">
@@ -400,6 +485,196 @@ function CallToAction({ event }) {
             ))}
           </div>
         ) : null}
+      </div>
+    </section>
+  );
+}
+
+function sectionsFor(event, placement) {
+  return (event.sections || []).filter((item) => {
+    if (item.visible === false) return false;
+    if (!(item.heading || item.body || item.image)) return false;
+    const place =
+      item.placement === "after-speakers" || item.placement === "after-experiences"
+        ? item.placement
+        : "opening";
+    return place === placement;
+  });
+}
+
+function placedCount(event, placement) {
+  const order = ["opening", "after-speakers", "after-experiences"];
+  const index = order.indexOf(placement);
+  return order.slice(0, Math.max(index, 0)).reduce((sum, key) => sum + sectionsFor(event, key).length, 0);
+}
+
+function eventFacts(event, when, place) {
+  const venue = place.filter(Boolean).join(", ");
+  return [
+    event.subtitle ? ["Theme", event.subtitle] : null,
+    event.formatLabel ? ["Format", event.formatLabel] : null,
+    when ? ["Date", when] : null,
+    venue ? ["Venue", venue] : null,
+    event.attendanceText ? ["Expected gathering", event.attendanceText, true] : null,
+    event.presentedBy ? ["Organising identity", event.presentedBy, true] : null,
+  ].filter(Boolean);
+}
+
+function EventFacts({ facts }) {
+  return (
+    <section className="section event-details" aria-labelledby="event-details">
+      <div className="container">
+        <div className="section-head">
+          <p className="kicker">At a glance</p>
+          <h2 id="event-details">Event details</h2>
+        </div>
+        <div className="event-fact-grid">
+          {facts.map(([label, value, wide]) => (
+            <article
+              key={label}
+              className={wide ? "event-fact is-wide" : "event-fact"}
+              data-fact={label.toLowerCase().split(" ")[0]}
+            >
+              <span className="event-fact-icon" aria-hidden="true">
+                <FactIcon name={label} />
+              </span>
+              <h3>{label}</h3>
+              <p>{value}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function FactIcon({ name }) {
+  const props = {
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "1.6",
+    strokeLinecap: "round",
+    strokeLinejoin: "round",
+  };
+  if (name === "Date") {
+    return (
+      <svg {...props}>
+        <rect x="3.5" y="5" width="17" height="15" rx="2" />
+        <path d="M3.5 10h17M8 3.5v3M16 3.5v3" />
+      </svg>
+    );
+  }
+  if (name === "Venue") {
+    return (
+      <svg {...props}>
+        <path d="M12 21s6.5-5.2 6.5-10a6.5 6.5 0 1 0-13 0c0 4.8 6.5 10 6.5 10z" />
+        <circle cx="12" cy="11" r="2.2" />
+      </svg>
+    );
+  }
+  if (name === "Format") {
+    return (
+      <svg {...props}>
+        <rect x="4" y="4" width="7" height="7" rx="1.4" />
+        <rect x="13" y="4" width="7" height="7" rx="1.4" />
+        <rect x="4" y="13" width="7" height="7" rx="1.4" />
+        <rect x="13" y="13" width="7" height="7" rx="1.4" />
+      </svg>
+    );
+  }
+  if (name === "Expected gathering") {
+    return (
+      <svg {...props}>
+        <circle cx="9" cy="9" r="2.4" />
+        <circle cx="16" cy="10" r="2" />
+        <path d="M4.5 18.5c.6-2.4 2.5-3.6 4.5-3.6s3.9 1.2 4.5 3.6M14 15.2c1.3-.4 2.6-.2 3.6.6 1 .8 1.6 2 1.9 2.7" />
+      </svg>
+    );
+  }
+  if (name === "Organising identity") {
+    return (
+      <svg {...props}>
+        <circle cx="12" cy="12" r="7.5" />
+        <path d="M12 8.2l1.1 2.2 2.4.3-1.8 1.7.4 2.4L12 13.6 9.9 14.8l.4-2.4-1.8-1.7 2.4-.3z" />
+      </svg>
+    );
+  }
+  return (
+    <svg {...props}>
+      <path d="M12 3.5l1.4 4.3L18 9.2l-4.6 1.4L12 15l-1.4-4.4L6 9.2l4.6-1.4z" />
+      <path d="M17.5 14.5l.6 1.8 1.9.6-1.9.6-.6 1.8-.6-1.8-1.8-.6 1.8-.6z" />
+    </svg>
+  );
+}
+
+function heroAction(event) {
+  if (event.registrationUrl) {
+    return {
+      href: event.registrationUrl,
+      label: "Register your interest",
+      external: /^https?:/i.test(event.registrationUrl),
+    };
+  }
+  if (!event.ctaVisible) return null;
+  const news = (event.sections || []).find(
+    (section) => section.visible !== false && /news|update/i.test(section.heading || ""),
+  );
+  return {
+    href: news ? `#${slugify(news.heading) || news.id}` : "#event-cta",
+    label: "Stay updated",
+    external: false,
+  };
+}
+
+function SpeakerNote({ event, people }) {
+  const proposed = people.some((person) => person.confirmation !== "confirmed");
+  const note =
+    event.speakersNote ||
+    (proposed
+      ? "Appearances marked proposed are subject to invitation, availability, written confirmation and final programme approval."
+      : "");
+  if (!note) return null;
+  return <p className="event-notice">{note}</p>;
+}
+
+function ctaLinks(event) {
+  return [
+    event.registrationUrl ? ["Register", event.registrationUrl] : null,
+    event.ticketUrl ? ["Tickets", event.ticketUrl] : null,
+    event.enquiryUrl ? ["Enquire", event.enquiryUrl] : null,
+  ].filter(Boolean);
+}
+
+function ClosingLines({ event }) {
+  const updated = formatUpdated(event.updatedAt);
+  if (!event.presentedBy && !updated) return null;
+  return (
+    <div className="event-closing">
+      {event.presentedBy ? <p className="event-credit">{event.presentedBy}</p> : null}
+      {updated ? <p className="event-updated">Last updated {updated}</p> : null}
+    </div>
+  );
+}
+
+function formatUpdated(iso) {
+  const date = new Date(iso || "");
+  if (Number.isNaN(date.getTime())) return "";
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "Asia/Kolkata",
+  }).format(date);
+}
+
+function Closing({ event }) {
+  if (!event.presentedBy && !event.disclaimer && !event.updatedAt) return null;
+  return (
+    <section className="section event-cta-band" aria-label="Event credit">
+      <div className="container">
+        {event.disclaimer ? <p>{event.disclaimer}</p> : null}
+        <ClosingLines event={event} />
       </div>
     </section>
   );

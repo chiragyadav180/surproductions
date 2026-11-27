@@ -61,6 +61,7 @@ export default function EventDetail() {
         description={eventSeoDescription(event)}
         path={`/events/${event.slug}`}
         image={event.heroImage || event.coverImage || "/images/hero-stage.jpg"}
+        keywords={event.seoKeywords || ""}
         jsonLd={eventJsonLd(event, site.url)}
       />
       <EventView event={event} related={related || []} />
